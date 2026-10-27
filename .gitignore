@@ -1,0 +1,18 @@
+# Bảo mật thông tin nhạy cảm
+.env
+*.env
+!Mẫu Cấu Hình.env
+*.bak
+
+# Python cache & môi trường ảo
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+env/
+venv/
+
+# Thư mục tạm
+temp/
+logs/
+*.log

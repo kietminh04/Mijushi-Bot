@@ -58,8 +58,8 @@ Trả về JSON:
 class TroLyGemini:
     def __init__(self, api_key: Optional[str] = None):
         self.api_key = api_key or os.getenv("GEMINI_API_KEY", "").strip()
-        # Ưu tiên gemini-3.5-flash-lite vì siêu tốc và không bị nghẽn 503
-        self.danh_sach_models = ["gemini-3.5-flash-lite", "gemini-3.5-flash"]
+        # Danh sách models ưu tiên tốc độ và độ ổn định cao
+        self.danh_sach_models = ["gemini-3.5-flash-lite", "gemini-3.5-flash", "gemini-2.5-flash"]
 
     def xu_ly_tin_nhan(self, cau_hoi: str, ten_nguoi_dung: str = "bạn") -> Dict[str, Any]:
         """Gửi câu chat tới Gemini để phân tích và sinh lời đáp (tự động thử model dự phòng)."""
@@ -95,7 +95,7 @@ class TroLyGemini:
         for model_name in self.danh_sach_models:
             url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={self.api_key}"
             try:
-                res = requests.post(url, headers=headers, json=payload, timeout=6)
+                res = requests.post(url, headers=headers, json=payload, timeout=25)
                 if res.status_code == 200:
                     data = res.json()
                     raw_text = data["candidates"][0]["content"]["parts"][0]["text"].strip()

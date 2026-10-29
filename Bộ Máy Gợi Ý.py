@@ -35,14 +35,14 @@ spec_csdl.loader.exec_module(csdl)
 # ==========================================
 TU_KHOA_QUY_TAC = {
     "nhiet_do_nong": ["nóng", "ấm", "ấm bụng", "ấm áp", "giữ ấm", "ngày lạnh", "mùa đông", "mưa lạnh", "se lạnh", "buốt"],
-    "nhiet_do_da": ["đá", "lạnh", "mát lạnh", "tê tái", "giải khát", "mát rượi", "nóng bức", "hè", "oi bức", "cháy da"],
+    "nhiet_do_da": ["đá", "lạnh", "mát", "mát mát", "mát mẻ", "mát lạnh", "tê tái", "giải khát", "mát rượi", "nóng bức", "hè", "oi bức", "cháy da", "khát"],
     "giam_can_healthy": ["giảm cân", "eat clean", "healthy", "thanh lọc", "detox", "ít calo", "ít đường", "không đường", "vóc dáng", "đẹp da", "thải độc"],
-    "tinh_tao_caffeine": ["buồn ngủ", "tỉnh táo", "tập trung", "thức đêm", "deadline", "sáng sớm", "cần tỉnh", "mệt mỏi uể oải", "nạp năng lượng"],
+    "tinh_tao_caffeine": ["buồn ngủ", "tỉnh táo", "tỉnh", "tập trung", "thức đêm", "deadline", "sáng sớm", "cần tỉnh", "mệt mỏi uể oải", "nạp năng lượng"],
     "khong_caffeine": ["mất ngủ", "khó ngủ", "say cà phê", "không caffeine", "không cafein", "tối muộn", "đêm khuya", "dị ứng cà phê", "tim đập nhanh"],
-    "vi_chua": ["chua", "chua thanh", "chua ngọt", "chanh", "cam", "ổi", "mãng cầu", "chanh leo", "giải ngấy"],
-    "vi_ngot_beo": ["ngọt", "béo", "ngậy", "kem", "cheese", "phô mai", "trân châu", "sữa tươi", "hảo ngọt", "xả stress"],
-    "vi_dang": ["đắng", "đậm đà", "cà phê đậm", "chát nhẹ", "mộc", "nguyên chất"],
-    "thanh_mat_the": ["thanh mát", "the mát", "bạc hà", "dưa hấu", "cần tây", "trà thảo mộc", "thanh tịnh", "dịu dàng"]
+    "vi_chua": ["chua", "chua chua", "chua thanh", "chua ngọt", "chanh", "cam", "ổi", "mãng cầu", "chanh leo", "giải ngấy"],
+    "vi_ngot_beo": ["ngọt", "ngọt ngọt", "béo", "béo ngậy", "ngậy", "kem", "cheese", "phô mai", "trân châu", "sữa tươi", "hảo ngọt", "xả stress"],
+    "vi_dang": ["đắng", "đắng đắng", "đậm đà", "cà phê đậm", "chát nhẹ", "mộc", "nguyên chất"],
+    "thanh_mat_the": ["thanh mát", "mát", "mát mát", "mát mẻ", "giải nhiệt", "the mát", "bạc hà", "dưa hấu", "cần tây", "trà thảo mộc", "thanh tịnh", "dịu dàng"]
 }
 
 

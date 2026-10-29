@@ -414,7 +414,14 @@ async def on_message(message: discord.Message):
             toa_do = VI_TRI_MAC_DINH[khu_vuc]
             ket_qua = bo_may_goi_y.goi_y(cau_hoi=clean_text, so_luong=5)
 
-            if not ket_qua or ket_qua[0]["tong_diem"] < 0.28:
+            # Nhận diện từ khóa khẩu vị tự nhiên
+            tu_khoa_nhan_biet = [
+                "mát", "mát mát", "lạnh", "đá", "ngọt", "béo", "chua", "đắng", "đậm", "ấm", "nóng",
+                "tỉnh", "uống", "nước", "trà", "cà phê", "cafe", "thèm", "ít đường", "ít đá", "giải nhiệt", "healthy"
+            ]
+            co_tu_khoa = any(tk in text_lower for tk in tu_khoa_nhan_biet)
+
+            if not ket_qua or (ket_qua[0]["tong_diem"] < 0.15 and not co_tu_khoa):
                 await message.reply(
                     "Mình chưa bắt được đúng gu của bạn lắm! Bạn thử miêu tả cụ thể hơn xíu xem đang thèm vị gì nhé "
                     "(ví dụ: *'thèm gì chua thanh mát quanh Bách Khoa'*, *'cà phê muối đậm đà'*, *'trà ô long nướng béo ngậy ít đá'*)..."

@@ -1,0 +1,22 @@
+name: Giữ Bot Luôn Thức 24/7
+
+on:
+  schedule:
+    # Chạy mỗi 5 phút một lần để Render không bao giờ ngủ đông
+    - cron: '*/5 * * * *'
+  workflow_dispatch:
+
+jobs:
+  ping_render:
+    name: Ping Render Endpoint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Gửi HTTP GET đến Render
+        run: |
+          HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" https://mijushi-bot.onrender.com)
+          echo "Render HTTP Status: $HTTP_STATUS"
+          if [ "$HTTP_STATUS" -eq 200 ]; then
+            echo "Bot Mijushi dang hoat dong tot!"
+          else
+            echo "Canh bao: Status $HTTP_STATUS"
+          fi

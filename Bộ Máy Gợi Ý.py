@@ -34,6 +34,10 @@ spec_csdl.loader.exec_module(csdl)
 # 1. TỪ ĐIỂN TỪ KHÓA Ý ĐỊNH (INTENT DICTIONARY)
 # ==========================================
 TU_KHOA_QUY_TAC = {
+    "danh_muc_ca_phe": ["cà phê", "cafe", "càfe", "caphe", "coffee", "espresso", "cold brew", "bạc xỉu", "bac xiu", "cà phê muối"],
+    "danh_muc_tra_sua": ["trà sữa", "tra sua", "milk tea", "boba", "trân châu", "ô long nướng"],
+    "danh_muc_tra_hoa_qua": ["trà hoa quả", "trà trái cây", "trà hoa cúc", "trà vải", "trà đào", "trà ổi", "mãng cầu"],
+    "danh_muc_nuoc_ep": ["nước ép", "sinh tố", "nuoc ep", "sinh to", "cam vắt", "dưa hấu", "bơ sáp"],
     "nhiet_do_nong": ["nóng", "ấm", "ấm bụng", "ấm áp", "giữ ấm", "ngày lạnh", "mùa đông", "mưa lạnh", "se lạnh", "buốt"],
     "nhiet_do_da": ["đá", "lạnh", "mát", "mát mát", "mát mẻ", "mát lạnh", "tê tái", "giải khát", "mát rượi", "nóng bức", "hè", "oi bức", "cháy da", "khát"],
     "giam_can_healthy": ["giảm cân", "eat clean", "healthy", "thanh lọc", "detox", "ít calo", "ít đường", "không đường", "vóc dáng", "đẹp da", "thải độc"],
@@ -265,6 +269,35 @@ class BoMayGoiYDoUong:
         """Tính điểm cộng quy tắc và tạo danh sách lý do phù hợp."""
         bonus = 0.0
         ly_do = []
+
+        # 0. Danh mục món (Cà phê, Trà sữa, Trà hoa quả, Nước ép)
+        if intents.get("danh_muc_ca_phe"):
+            if mon["danh_muc"] == "Cà Phê":
+                bonus += 0.5
+                ly_do.append("Dòng cà phê đặc trưng từ đậm đà truyền thống đến hiện đại")
+            else:
+                bonus -= 0.3
+
+        if intents.get("danh_muc_tra_sua"):
+            if mon["danh_muc"] == "Trà Sữa":
+                bonus += 0.5
+                ly_do.append("Trà sữa thơm béo chuẩn gu với trân châu dai giòn")
+            else:
+                bonus -= 0.3
+
+        if intents.get("danh_muc_tra_hoa_qua"):
+            if mon["danh_muc"] in ["Trà Hoa Quả", "Thư Giãn"]:
+                bonus += 0.5
+                ly_do.append("Trà hoa quả tươi mát, thanh lọc cơ thể")
+            else:
+                bonus -= 0.3
+
+        if intents.get("danh_muc_nuoc_ep"):
+            if mon["danh_muc"] in ["Nước Ép", "Đá Xay"]:
+                bonus += 0.5
+                ly_do.append("Nước ép và sinh tố tươi mát bổ sung vitamin")
+            else:
+                bonus -= 0.3
 
         # 1. Nhiệt độ
         if intents.get("nhiet_do_nong"):

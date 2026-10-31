@@ -339,7 +339,7 @@ async def on_message(message: discord.Message):
         THOI_GIAN_CHAT_CUOI[user_id] = now
 
         async with message.channel.typing():
-            # 1. GỬI TỚI GEMINI PHÂN TÍCH Ý ĐỊNH & SINH LỜI ĐÁP
+            # 1. GỬI TỚI NÃO BỘ GEMINI PHÂN TÍCH TOÀN DIỆN VÀ CHỌN MÓN CHÍNH XÁC
             ten_user = message.author.display_name or "bạn"
             phan_tich = tro_ly_gemini.xu_ly_tin_nhan(clean_text, ten_user)
 
@@ -352,7 +352,7 @@ async def on_message(message: discord.Message):
                     await message.reply(loi_dap)
                     return
 
-            # B. Trường hợp GOI_Y_DO_UONG (Muốn tìm món, thèm nước, theo tâm trạng)
+            # B. Trường hợp GOI_Y_DO_UONG (Tìm món, hỏi menu cafe/trà sữa, theo tâm trạng, order hộ...)
             elif loai_y_dinh == "GOI_Y_DO_UONG":
                 kv_phat_hien = phan_tich.get("khu_vuc")
                 khu_vuc = "Bách Khoa"
@@ -368,12 +368,25 @@ async def on_message(message: discord.Message):
                             break
 
                 toa_do = VI_TRI_MAC_DINH[khu_vuc]
-                tu_khoa = phan_tich.get("tu_khoa_khau_vi") or clean_text
-                ket_qua = bo_may_goi_y.goi_y(cau_hoi=tu_khoa, so_luong=5)
 
-                if ket_qua:
+                # Trích xuất danh sách ID món do chính não bộ Gemini lựa chọn
+                danh_sach_ids = phan_tich.get("danh_sach_id_mon", [])
+                ly_do_map = phan_tich.get("ly_do_chon", {})
+
+                danh_sach_goi_y = []
+                for idx, mid in enumerate(danh_sach_ids[:4]):
+                    m = csdl.lay_do_uong_theo_id(mid)
+                    if m:
+                        ly_do = ly_do_map.get(mid) or f"Hương vị: {m['huong_vi']}"
+                        danh_sach_goi_y.append({
+                            "mon": m,
+                            "tong_diem": round(0.95 - (idx * 0.05), 2),
+                            "ly_do_goi_y": ly_do
+                        })
+
+                if danh_sach_goi_y:
                     view = ViewGoiYDanhSach(
-                        danh_sach_goi_y=ket_qua,
+                        danh_sach_goi_y=danh_sach_goi_y,
                         user_id=message.author.id,
                         cau_hoi=clean_text,
                         toa_do_user=toa_do,
@@ -385,58 +398,12 @@ async def on_message(message: discord.Message):
                     await message.reply(content=noi_dung, embed=embed, view=view)
                     return
 
-            # C. FALLBACK CỤC BỘ (Nếu Gemini bận hoặc mất mạng)
-            logger.info("Chuyển sang cơ chế phân loại Semantic Intent Classifier cục bộ...")
-            y_dinh_local, _ = bo_may_goi_y.phan_loai_y_dinh(clean_text)
-
-            if y_dinh_local == "CHIT_CHAT":
-                embed_chao = discord.Embed(
-                    title="👋 Chào bạn! Mình là Mijushi đây nè 🍹",
-                    description=(
-                        "Hôm nay bạn đang cảm thấy thế nào?\n\n"
-                        "• Cần một ly **Cà phê đậm vị** để tỉnh táo làm việc/học tập?\n"
-                        "• Hay một ly **Trà sữa béo ngậy** để nạp năng lượng xả stress?\n"
-                        "• Hoặc **Nước ép / Trà hoa quả thanh mát** giải nhiệt vóc dáng?\n\n"
-                        "👉 *Bạn cứ gõ tự nhiên cảm giác của bạn (kèm khu vực quanh Hà Nội nếu muốn), mình sẽ lọc ngay danh sách món chân ái cho bạn nhé!*"
-                    ),
-                    color=MAU_SAC["Chính"]
-                )
-                embed_chao.set_footer(text="Ví dụ: 'trời mưa lạnh thèm gì ngọt ấm béo ngậy quanh Bách Khoa'")
-                await message.reply(embed=embed_chao)
-                return
-
-            khu_vuc = "Bách Khoa"
-            for kv in VI_TRI_MAC_DINH.keys():
-                if kv.lower() in text_lower:
-                    khu_vuc = kv
-                    break
-
-            toa_do = VI_TRI_MAC_DINH[khu_vuc]
-            ket_qua = bo_may_goi_y.goi_y(cau_hoi=clean_text, so_luong=5)
-
-            # Nhận diện từ khóa khẩu vị tự nhiên
-            tu_khoa_nhan_biet = [
-                "mát", "mát mát", "lạnh", "đá", "ngọt", "béo", "chua", "đắng", "đậm", "ấm", "nóng",
-                "tỉnh", "uống", "nước", "trà", "cà phê", "cafe", "thèm", "ít đường", "ít đá", "giải nhiệt", "healthy"
-            ]
-            co_tu_khoa = any(tk in text_lower for tk in tu_khoa_nhan_biet)
-
-            if not ket_qua or (ket_qua[0]["tong_diem"] < 0.15 and not co_tu_khoa):
-                await message.reply(
-                    "Mình chưa bắt được đúng gu của bạn lắm! Bạn thử miêu tả cụ thể hơn xíu xem đang thèm vị gì nhé "
-                    "(ví dụ: *'thèm gì chua thanh mát quanh Bách Khoa'*, *'cà phê muối đậm đà'*, *'trà ô long nướng béo ngậy ít đá'*)..."
-                )
-                return
-
-            view = ViewGoiYDanhSach(
-                danh_sach_goi_y=ket_qua,
-                user_id=message.author.id,
-                cau_hoi=clean_text,
-                toa_do_user=toa_do,
-                ten_khu_vuc=khu_vuc
+            # C. TRƯỜNG HỢP MẠNG GOOGLE QUÁ TẢI (TIMEOUT / 503)
+            await message.reply(
+                "Dạ Mijushi đang kết nối lại với não bộ Google AI một xíu (mạng quốc tế đang hơi chậm), "
+                "bạn thử nhắn lại sau 3 giây nhé! 🍹"
             )
-            embed = view.tao_embed_danh_sach()
-            await message.reply(embed=embed, view=view)
+            return
 
     await bot.process_commands(message)
 
@@ -462,20 +429,42 @@ async def cmd_goi_y(interaction: discord.Interaction, mo_ta: str, khu_vuc: Optio
     ten_kv = khu_vuc.value if khu_vuc else "Bách Khoa"
     toa_do = VI_TRI_MAC_DINH.get(ten_kv, VI_TRI_MAC_DINH["Bách Khoa"])
 
-    ket_qua = bo_may_goi_y.goi_y(cau_hoi=mo_ta, so_luong=5)
-    if not ket_qua:
-        await interaction.followup.send("Rất tiếc, mình chưa tìm thấy món phù hợp. Bạn hãy thử miêu tả cách khác nhé!")
+    ten_user = interaction.user.display_name or "bạn"
+    phan_tich = tro_ly_gemini.xu_ly_tin_nhan(mo_ta, ten_user)
+
+    danh_sach_ids = phan_tich.get("danh_sach_id_mon", [])
+    ly_do_map = phan_tich.get("ly_do_chon", {})
+
+    danh_sach_goi_y = []
+    for idx, mid in enumerate(danh_sach_ids[:4]):
+        m = csdl.lay_do_uong_theo_id(mid)
+        if m:
+            ly_do = ly_do_map.get(mid) or f"Hương vị: {m['huong_vi']}"
+            danh_sach_goi_y.append({
+                "mon": m,
+                "tong_diem": round(0.95 - (idx * 0.05), 2),
+                "ly_do_goi_y": ly_do
+            })
+
+    if not danh_sach_goi_y:
+        ket_qua = bo_may_goi_y.goi_y(cau_hoi=mo_ta, so_luong=4)
+        danh_sach_goi_y = ket_qua
+
+    if not danh_sach_goi_y:
+        await interaction.followup.send("Dạ Mijushi chưa tìm thấy món phù hợp, bạn thử miêu tả lại xem sao nhé!")
         return
 
     view = ViewGoiYDanhSach(
-        danh_sach_goi_y=ket_qua,
+        danh_sach_goi_y=danh_sach_goi_y,
         user_id=interaction.user.id,
         cau_hoi=mo_ta,
         toa_do_user=toa_do,
         ten_khu_vuc=ten_kv
     )
     embed = view.tao_embed_danh_sach()
-    await interaction.followup.send(embed=embed, view=view)
+    loi_nhan = phan_tich.get("loi_nhan", "")
+    noi_dung = f"✨ *{loi_nhan}*" if loi_nhan else None
+    await interaction.followup.send(content=noi_dung, embed=embed, view=view)
 
 
 @bot.tree.command(name="menu", description="Xem menu các món đồ uống nổi bật.")

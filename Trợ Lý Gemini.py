@@ -94,6 +94,9 @@ class TroLyGemini:
     def xu_ly_tin_nhan(self, cau_hoi: str, ten_nguoi_dung: str = "bạn") -> Dict[str, Any]:
         """Gửi câu chat tới Gemini để phân tích toàn diện và chọn món chính xác 100%."""
         if not self.api_key:
+            self.api_key = os.getenv("GEMINI_API_KEY", "").strip()
+
+        if not self.api_key:
             return {"loai": "FALLBACK", "ly_do": "Chưa cấu hình GEMINI_API_KEY"}
 
         prompt = (

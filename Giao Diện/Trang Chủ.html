@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="vi" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mijushi 🍹 Trợ Lý Gợi Ý Đồ Uống Thông Minh Hà Nội</title>
+  <!-- Google Fonts & Tailwind CSS CDN -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#ecfdf5',
+              400: '#34d399',
+              500: '#10b981',
+              600: '#059669',
+            },
+            warm: {
+              400: '#fbbf24',
+              500: '#f59e0b',
+              600: '#d97706',
+            },
+            dark: {
+              bg: '#080c14',
+              surface: '#0f172a',
+              card: 'rgba(17, 24, 39, 0.72)',
+              border: 'rgba(255, 255, 255, 0.08)',
+            }
+          },
+          animation: {
+            'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+            'float': 'float 6s ease-in-out infinite',
+            'glow': 'glow 2s ease-in-out infinite alternate',
+          },
+          keyframes: {
+            float: {
+              '0%, 100%': { transform: 'translateY(0px)' },
+              '50%': { transform: 'translateY(-10px)' },
+            },
+            glow: {
+              '0%': { opacity: '0.4' },
+              '100%': { opacity: '0.8' },
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(15, 23, 42, 0.6);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(16, 185, 129, 0.4);
+    }
+
+    /* Glassmorphism Classes */
+    .glass-panel {
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .glass-card {
+      background: rgba(30, 41, 59, 0.55);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+    }
+    .glass-card:hover {
+      border-color: rgba(16, 185, 129, 0.35);
+      box-shadow: 0 10px 25px -5px rgba(16, 185, 129, 0.1);
+    }
+    .glass-input {
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+    }
+    .glass-input:focus {
+      border-color: rgba(16, 185, 129, 0.6);
+      box-shadow: 0 0 15px rgba(16, 185, 129, 0.25);
+    }
+
+    /* Glowing Blobs */
+    .blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(90px);
+      pointer-events: none;
+      z-index: 0;
+    }
+  </style>
+</head>
+<body class="bg-dark-bg text-slate-100 font-sans min-h-screen flex flex-col relative overflow-hidden select-none">
+
+  <!-- Ambient Glow Background Blobs -->
+  <div class="blob w-96 h-96 bg-brand-500/15 -top-20 -left-20 animate-glow"></div>
+  <div class="blob w-[30rem] h-[30rem] bg-warm-500/10 top-1/3 -right-32 animate-float"></div>
+  <div class="blob w-80 h-80 bg-cyan-500/10 -bottom-20 left-1/4 animate-glow"></div>
+
+  <!-- MAIN WRAPPER -->
+  <div class="relative z-10 flex flex-col h-screen max-w-7xl mx-auto w-full px-2 sm:px-4 py-2 sm:py-3">
+
+    <!-- 1. TOP HEADER -->
+    <header class="glass-panel rounded-2xl px-4 py-3 mb-2 flex items-center justify-between shadow-2xl flex-shrink-0">
+      <div class="flex items-center space-x-3">
+        <!-- Logo Icon -->
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 via-teal-500 to-warm-400 flex items-center justify-center shadow-lg shadow-brand-500/20 text-white font-bold text-xl">
+          🍹
+        </div>
+        <div>
+          <div class="flex items-center space-x-2">
+            <h1 class="text-lg sm:text-xl font-bold bg-gradient-to-r from-emerald-400 via-teal-300 to-amber-300 bg-clip-text text-transparent">
+              Mijushi
+            </h1>
+            <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-brand-500/10 text-brand-400 border border-brand-500/20">
+              Web AI
+            </span>
+          </div>
+          <p class="text-[11px] text-slate-400 hidden sm:block">Trợ lý gợi ý đồ uống thông minh • Hà Nội</p>
+        </div>
+      </div>
+
+      <!-- Center & Right Controls -->
+      <div class="flex items-center space-x-2 sm:space-x-3">
+        <!-- Location Selector -->
+        <div class="flex items-center glass-card px-2.5 py-1.5 rounded-xl border border-white/10 text-xs">
+          <i class="fa-solid fa-location-dot text-rose-400 mr-2 text-sm"></i>
+          <select id="locationSelect" class="bg-transparent text-slate-200 outline-none cursor-pointer font-medium text-xs">
+            <option value="Bách Khoa" class="bg-slate-900 text-slate-200">📍 Bách Khoa (HUST)</option>
+            <option value="Hoàn Kiếm" class="bg-slate-900 text-slate-200">📍 Hoàn Kiếm (Phố Cổ)</option>
+            <option value="Vũ Tông Phan" class="bg-slate-900 text-slate-200">📍 Vũ Tông Phan (Thanh Xuân)</option>
+            <option value="Đống Đa" class="bg-slate-900 text-slate-200">📍 Đống Đa (Xã Đàn)</option>
+            <option value="Cầu Giấy" class="bg-slate-900 text-slate-200">📍 Cầu Giấy (Duy Tân)</option>
+          </select>
+        </div>
+
+        <!-- AI Engine Status Badge -->
+        <div class="hidden md:flex items-center space-x-2 px-3 py-1.5 rounded-xl glass-card text-xs">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+          <span class="text-slate-300 font-medium">Gemini 3.5 Flash</span>
+        </div>
+
+        <!-- Menu Drawer Toggle Button -->
+        <button id="btnOpenMenu" class="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-emerald-500/20 to-teal-500/20 hover:from-emerald-500/30 hover:to-teal-500/30 border border-emerald-500/30 text-emerald-300 font-medium text-xs transition duration-200 shadow-sm">
+          <i class="fa-solid fa-book-open"></i>
+          <span class="hidden sm:inline">Menu 20 Món</span>
+        </button>
+
+        <!-- Clear Chat Button -->
+        <button id="btnClearChat" title="Xóa lịch sử chat" class="w-8 h-8 rounded-xl glass-card hover:bg-slate-800 text-slate-400 hover:text-slate-200 flex items-center justify-center transition">
+          <i class="fa-solid fa-rotate-right text-xs"></i>
+        </button>
+      </div>
+    </header>
+
+    <!-- 2. MAIN CHAT AREA -->
+    <main class="flex-1 glass-panel rounded-2xl flex flex-col overflow-hidden shadow-2xl relative">
+      
+      <!-- Quick Mood Suggestion Pills (Thanh chọn gu nhanh) -->
+      <div class="border-b border-white/5 px-4 py-2 flex items-center space-x-2 overflow-x-auto text-xs flex-shrink-0 bg-slate-900/40">
+        <span class="text-slate-400 font-medium whitespace-nowrap text-[11px] mr-1">
+          <i class="fa-solid fa-wand-magic-sparkles text-warm-400 mr-1"></i>Gu nhanh:
+        </span>
+        <button class="mood-pill px-2.5 py-1 rounded-lg glass-card hover:bg-emerald-500/20 hover:border-emerald-500/30 text-slate-300 whitespace-nowrap transition" data-text="cho t cái gì mát mát thanh nhiệt giải khát">
+          ❄️ Mát lạnh giải nhiệt
+        </button>
+        <button class="mood-pill px-2.5 py-1 rounded-lg glass-card hover:bg-amber-500/20 hover:border-amber-500/30 text-slate-300 whitespace-nowrap transition" data-text="order cho bạn một ly cà phê đậm đà tỉnh táo chạy deadline">
+          ☕ Cà phê chạy deadline
+        </button>
+        <button class="mood-pill px-2.5 py-1 rounded-lg glass-card hover:bg-teal-500/20 hover:border-teal-500/30 text-slate-300 whitespace-nowrap transition" data-text="thèm trà sữa béo ngậy trân châu hoàng kim xả stress">
+          🧋 Trà sữa trân châu
+        </button>
+        <button class="mood-pill px-2.5 py-1 rounded-lg glass-card hover:bg-green-500/20 hover:border-green-500/30 text-slate-300 whitespace-nowrap transition" data-text="có món gì healthy ít calo hỗ trợ giảm cân đẹp da không">
+          🌱 Detox ít calo
+        </button>
+        <button class="mood-pill px-2.5 py-1 rounded-lg glass-card hover:bg-purple-500/20 hover:border-purple-500/30 text-slate-300 whitespace-nowrap transition" data-text="trời se lạnh thèm ly nước ấm không caffeine dễ ngủ">
+          🍵 Trà nóng an thần
+        </button>
+      </div>
+
+      <!-- Chat History Container -->
+      <div id="chatHistory" class="flex-1 p-3 sm:p-5 overflow-y-auto space-y-4">
+        
+        <!-- Welcome Hero Message -->
+        <div class="flex items-start space-x-3 max-w-2xl">
+          <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-brand-500 to-teal-400 flex items-center justify-center text-white text-base shadow-md flex-shrink-0 mt-0.5">
+            🍹
+          </div>
+          <div class="glass-card rounded-2xl rounded-tl-none p-4 text-sm text-slate-200 border border-white/10 leading-relaxed shadow-lg">
+            <p class="font-semibold text-emerald-400 mb-1 flex items-center">
+              Xin chào Kiệt! Mình là Mijushi 🍹
+            </p>
+            <p class="text-slate-300 mb-3 text-[13px]">
+              Mình được trang bị não bộ **Google Gemini 3.5 Flash** cùng dữ liệu **hơn 60 chi nhánh quán quanh Hà Nội**. Hãy kể cho mình nghe tâm trạng, khẩu vị, hoặc nhờ mình order hộ bạn bè, mình sẽ phân tích và định vị quán gần nhất cho bạn ngay nhé!
+            </p>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-slate-300 pt-1">
+              <div class="p-2 rounded-xl bg-white/5 border border-white/5 flex items-center space-x-2">
+                <i class="fa-solid fa-sparkles text-amber-400"></i>
+                <span>Hiểu sâu cảm xúc & ngữ cảnh</span>
+              </div>
+              <div class="p-2 rounded-xl bg-white/5 border border-white/5 flex items-center space-x-2">
+                <i class="fa-solid fa-location-crosshairs text-teal-400"></i>
+                <span>Định vị khoảng cách mét chuẩn GPS</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Thinking Indicator (Ẩn mặc định) -->
+      <div id="thinkingIndicator" class="hidden px-5 py-2 flex items-center space-x-3 text-xs text-slate-400 bg-slate-900/60 backdrop-blur-md">
+        <div class="flex space-x-1.5">
+          <div class="w-2 h-2 rounded-full bg-emerald-400 animate-bounce"></div>
+          <div class="w-2 h-2 rounded-full bg-teal-400 animate-bounce [animation-delay:-0.15s]"></div>
+          <div class="w-2 h-2 rounded-full bg-amber-400 animate-bounce [animation-delay:-0.3s]"></div>
+        </div>
+        <span class="italic font-medium">Mijushi đang suy luận ngữ nghĩa và định vị các quán quanh bạn...</span>
+      </div>
+
+      <!-- 3. BOTTOM CHAT INPUT BAR -->
+      <div class="p-3 sm:p-4 bg-slate-900/80 border-t border-white/10 backdrop-blur-xl flex-shrink-0">
+        <form id="chatForm" class="flex items-center space-x-2 sm:space-x-3">
+          <div class="relative flex-1">
+            <input 
+              type="text" 
+              id="chatInput" 
+              autocomplete="off"
+              placeholder="Thèm gì cứ nhắn Mijushi (ví dụ: 'order cho @Anh Meo 1 ly cafe nhé', 'thèm trà sữa quanh Bách Khoa')..." 
+              class="w-full glass-input text-slate-100 placeholder-slate-400 text-xs sm:text-sm rounded-xl py-3 pl-4 pr-10 outline-none transition"
+            >
+            <button type="button" id="btnEmoji" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-warm-400 transition text-sm">
+              <i class="fa-regular fa-face-smile"></i>
+            </button>
+          </div>
+          <button 
+            type="submit" 
+            id="btnSend"
+            class="px-4 sm:px-6 py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-semibold text-xs sm:text-sm shadow-lg shadow-emerald-500/25 transition duration-200 flex items-center space-x-2 flex-shrink-0 active:scale-95"
+          >
+            <span>Gửi</span>
+            <i class="fa-solid fa-paper-plane text-xs"></i>
+          </button>
+        </form>
+        <div class="flex justify-between items-center text-[10px] text-slate-400 mt-2 px-1">
+          <span>💡 Bạn có thể hỏi theo tâm trạng, calo, vị ấm hay order hộ bạn bè</span>
+          <span>Phát triển bởi Vũ Minh Kiệt • HUST</span>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- 4. MODAL CHI TIẾT QUÁN GẦN NHẤT (POPUP KÍNH MỜ) -->
+  <div id="shopModal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-md hidden items-center justify-center p-4">
+    <div class="glass-panel w-full max-w-lg rounded-3xl p-5 border border-white/15 shadow-2xl relative animate-float">
+      <!-- Close Button -->
+      <button id="btnCloseModal" class="absolute top-4 right-4 w-8 h-8 rounded-full glass-card hover:bg-rose-500/20 text-slate-300 hover:text-rose-300 flex items-center justify-center transition">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+      <!-- Modal Content Header -->
+      <div class="flex items-center space-x-3 mb-4">
+        <div id="modalDrinkIcon" class="w-12 h-12 rounded-2xl bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-2xl">
+          🥤
+        </div>
+        <div>
+          <h3 id="modalDrinkName" class="text-base sm:text-lg font-bold text-white">Tên Món Đồ Uống</h3>
+          <p id="modalDrinkPrice" class="text-xs text-emerald-400 font-semibold">~35.000 VNĐ</p>
+        </div>
+      </div>
+
+      <!-- Drink Details Pills -->
+      <div class="grid grid-cols-3 gap-2 mb-4 text-center text-xs">
+        <div class="p-2 rounded-xl bg-white/5 border border-white/5">
+          <span class="text-slate-400 block text-[10px]">Nhiệt độ</span>
+          <span id="modalDrinkTemp" class="font-medium text-cyan-300">Đá</span>
+        </div>
+        <div class="p-2 rounded-xl bg-white/5 border border-white/5">
+          <span class="text-slate-400 block text-[10px]">Năng lượng</span>
+          <span id="modalDrinkCalo" class="font-medium text-amber-300">140 kcal</span>
+        </div>
+        <div class="p-2 rounded-xl bg-white/5 border border-white/5">
+          <span class="text-slate-400 block text-[10px]">Caffeine</span>
+          <span id="modalDrinkCaffeine" class="font-medium text-emerald-300">Cao</span>
+        </div>
+      </div>
+
+      <!-- Nearest Shops List -->
+      <div class="mb-3">
+        <div class="flex items-center justify-between mb-2">
+          <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center">
+            <i class="fa-solid fa-store text-emerald-400 mr-1.5"></i>Các quán gần nhất đang bán
+          </h4>
+          <span id="modalCurrentArea" class="text-[11px] text-slate-400 font-medium">Bách Khoa</span>
+        </div>
+        <div id="modalShopsList" class="space-y-2.5 max-h-60 overflow-y-auto pr-1">
+          <!-- Dynamically inserted shops -->
+        </div>
+      </div>
+
+      <div class="pt-2 border-t border-white/10 text-center text-[11px] text-slate-400">
+        Bấm nút ShopeeFood để mở ứng dụng đặt giao nước tận nơi
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. SLIDE-OUT MENU DRAWER (XEM TOÀN BỘ 20 MÓN) -->
+  <div id="menuDrawer" class="fixed inset-y-0 right-0 z-50 w-full max-w-md glass-panel border-l border-white/10 shadow-2xl transform translate-x-full transition-transform duration-300 ease-in-out flex flex-col">
+    <!-- Drawer Header -->
+    <div class="p-4 border-b border-white/10 flex items-center justify-between flex-shrink-0">
+      <div class="flex items-center space-x-2">
+        <span class="text-xl">📖</span>
+        <h3 class="font-bold text-white text-base">Menu 20 Món Chuẩn</h3>
+      </div>
+      <button id="btnCloseDrawer" class="w-8 h-8 rounded-xl glass-card hover:bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center transition">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+
+    <!-- Search & Filter Tabs in Drawer -->
+    <div class="p-3 border-b border-white/5 space-y-2 flex-shrink-0 bg-slate-900/40">
+      <div class="relative">
+        <input 
+          type="text" 
+          id="menuSearch" 
+          placeholder="Tìm tên món, hương vị (cà phê, bơ, dừa...)..."
+          class="w-full glass-input text-xs rounded-xl py-2 pl-8 pr-3 text-slate-200 outline-none"
+        >
+        <i class="fa-solid fa-magnifying-glass absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+      </div>
+      <div class="flex items-center space-x-1.5 overflow-x-auto text-[11px] pb-1" id="categoryFilterContainer">
+        <button class="cat-pill px-2.5 py-1 rounded-lg bg-emerald-500/20 text-emerald-300 font-medium whitespace-nowrap" data-cat="all">Tất cả (20)</button>
+        <button class="cat-pill px-2.5 py-1 rounded-lg glass-card text-slate-400 whitespace-nowrap" data-cat="Cà Phê">Cà Phê</button>
+        <button class="cat-pill px-2.5 py-1 rounded-lg glass-card text-slate-400 whitespace-nowrap" data-cat="Trà Sữa">Trà Sữa</button>
+        <button class="cat-pill px-2.5 py-1 rounded-lg glass-card text-slate-400 whitespace-nowrap" data-cat="Trà Hoa Quả">Trà Hoa Quả</button>
+        <button class="cat-pill px-2.5 py-1 rounded-lg glass-card text-slate-400 whitespace-nowrap" data-cat="Đá Xay">Đá Xay</button>
+        <button class="cat-pill px-2.5 py-1 rounded-lg glass-card text-slate-400 whitespace-nowrap" data-cat="Nước Ép">Nước Ép</button>
+        <button class="cat-pill px-2.5 py-1 rounded-lg glass-card text-slate-400 whitespace-nowrap" data-cat="Thư Giãn">Thư Giãn</button>
+      </div>
+    </div>
+
+    <!-- Menu Items List -->
+    <div id="drawerMenuList" class="flex-1 p-3 overflow-y-auto space-y-2.5">
+      <div class="text-center text-slate-400 text-xs py-8">
+        <i class="fa-solid fa-spinner fa-spin mr-2"></i>Đang tải danh mục 20 món...
+      </div>
+    </div>
+  </div>
+
+  <!-- JAVASCRIPT CLIENT LOGIC -->
+  <script>
+    // State
+    let fullMenu = [];
+    let currentCategory = 'all';
+
+    const EMOJI_MAP = {
+      'Cà Phê': '☕',
+      'Trà Sữa': '🧋',
+      'Trà Hoa Quả': '🍑',
+      'Đá Xay': '🍧',
+      'Nước Ép': '🍉',
+      'Thư Giãn': '🍵'
+    };
+
+    // DOM Elements
+    const chatHistory = document.getElementById('chatHistory');
+    const chatForm = document.getElementById('chatForm');
+    const chatInput = document.getElementById('chatInput');
+    const locationSelect = document.getElementById('locationSelect');
+    const thinkingIndicator = document.getElementById('thinkingIndicator');
+    const btnClearChat = document.getElementById('btnClearChat');
+
+    // Drawer Elements
+    const btnOpenMenu = document.getElementById('btnOpenMenu');
+    const btnCloseDrawer = document.getElementById('btnCloseDrawer');
+    const menuDrawer = document.getElementById('menuDrawer');
+    const drawerMenuList = document.getElementById('drawerMenuList');
+    const menuSearch = document.getElementById('menuSearch');
+
+    // Modal Elements
+    const shopModal = document.getElementById('shopModal');
+    const btnCloseModal = document.getElementById('btnCloseModal');
+    const modalDrinkIcon = document.getElementById('modalDrinkIcon');
+    const modalDrinkName = document.getElementById('modalDrinkName');
+    const modalDrinkPrice = document.getElementById('modalDrinkPrice');
+    const modalDrinkTemp = document.getElementById('modalDrinkTemp');
+    const modalDrinkCalo = document.getElementById('modalDrinkCalo');
+    const modalDrinkCaffeine = document.getElementById('modalDrinkCaffeine');
+    const modalCurrentArea = document.getElementById('modalCurrentArea');
+    const modalShopsList = document.getElementById('modalShopsList');
+
+    // 1. Initial Load: Fetch Menu
+    async function loadMenu() {
+      try {
+        const res = await fetch('/api/menu');
+        const data = await res.json();
+        if (data.danh_sach_do_uong) {
+          fullMenu = data.danh_sach_do_uong;
+          renderDrawerMenu(fullMenu);
+        }
+      } catch (err) {
+        console.error('Lỗi tải menu:', err);
+      }
+    }
+    loadMenu();
+
+    // 2. Chat Form Submit
+    chatForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const message = chatInput.value.trim();
+      if (!message) return;
+
+      appendUserMessage(message);
+      chatInput.value = '';
+      chatInput.focus();
+
+      // Show thinking indicator
+      thinkingIndicator.classList.remove('hidden');
+      scrollToBottom();
+
+      try {
+        const res = await fetch('/api/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            message: message,
+            user_name: 'Kiệt',
+            location: locationSelect.value
+          })
+        });
+
+        const data = await res.json();
+        thinkingIndicator.classList.add('hidden');
+
+        if (data.loai === 'CHIT_CHAT') {
+          appendBotChitChat(data.reply);
+        } else if (data.loai === 'GOI_Y_DO_UONG') {
+          appendBotDrinkRecommendations(data);
+        } else {
+          appendBotChitChat(data.reply || 'Mijushi đang bận một xíu, bạn hỏi lại nhé!');
+        }
+      } catch (err) {
+        thinkingIndicator.classList.add('hidden');
+        appendBotChitChat('Lỗi kết nối tới máy chủ Mijushi Web API. Vui lòng kiểm tra lại kết nối!');
+      }
+    });
+
+    // Append User Message Bubble
+    function appendUserMessage(text) {
+      const msgDiv = document.createElement('div');
+      msgDiv.className = 'flex items-start justify-end space-x-2.5 max-w-xl ml-auto';
+      msgDiv.innerHTML = `
+        <div class="glass-card bg-emerald-500/15 border-emerald-500/30 rounded-2xl rounded-tr-none p-3.5 text-xs sm:text-sm text-slate-100 shadow-md">
+          <p class="leading-relaxed">${escapeHtml(text)}</p>
+        </div>
+        <div class="w-8 h-8 rounded-xl bg-slate-800 border border-white/10 flex items-center justify-center text-xs text-emerald-400 font-bold flex-shrink-0 mt-0.5">
+          KM
+        </div>
+      `;
+      chatHistory.appendChild(msgDiv);
+      scrollToBottom();
+    }
+
+    // Append Bot Chit Chat Bubble
+    function appendBotChitChat(text) {
+      const msgDiv = document.createElement('div');
+      msgDiv.className = 'flex items-start space-x-3 max-w-2xl';
+      msgDiv.innerHTML = `
+        <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-brand-500 to-teal-400 flex items-center justify-center text-white text-sm shadow-md flex-shrink-0 mt-0.5">
+          🍹
+        </div>
+        <div class="glass-card rounded-2xl rounded-tl-none p-3.5 text-xs sm:text-sm text-slate-200 border border-white/10 shadow-lg leading-relaxed">
+          <p>${formatBotText(text)}</p>
+        </div>
+      `;
+      chatHistory.appendChild(msgDiv);
+      scrollToBottom();
+    }
+
+    // Append Bot Drink Recommendations Bubble (Rich Cards)
+    function appendBotDrinkRecommendations(data) {
+      const msgDiv = document.createElement('div');
+      msgDiv.className = 'flex items-start space-x-3 max-w-3xl';
+
+      let cardsHtml = '';
+      (data.danh_sach_mon || []).forEach((item, index) => {
+        const mon = item.mon;
+        const emoji = EMOJI_MAP[mon.danh_muc] || '🥤';
+        const lyDo = item.ly_do || mon.huong_vi;
+        const encodedItem = encodeURIComponent(JSON.stringify(item));
+
+        cardsHtml += `
+          <div class="glass-card rounded-2xl p-3.5 border border-white/10 flex flex-col justify-between hover:border-emerald-500/40 transition duration-200 group">
+            <div>
+              <div class="flex items-start justify-between mb-2">
+                <div class="flex items-center space-x-2">
+                  <span class="text-xl p-1.5 rounded-xl bg-white/5 border border-white/5">${emoji}</span>
+                  <div>
+                    <h4 class="font-bold text-white text-xs sm:text-sm group-hover:text-emerald-300 transition">${index + 1}. ${mon.ten}</h4>
+                    <span class="text-[10px] text-slate-400 uppercase tracking-wide font-medium">${mon.danh_muc}</span>
+                  </div>
+                </div>
+                <span class="px-2 py-0.5 rounded-lg bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 font-bold text-xs whitespace-nowrap">
+                  ~${Number(mon.gia).toLocaleString('vi-VN')}đ
+                </span>
+              </div>
+
+              <!-- Tags / Stats -->
+              <div class="flex items-center space-x-2 text-[10px] mb-2 text-slate-300">
+                <span class="px-2 py-0.5 rounded-md bg-white/5 border border-white/5">Nhiệt độ: <b>${mon.nhiet_do}</b></span>
+                <span class="px-2 py-0.5 rounded-md bg-white/5 border border-white/5">Calo: <b class="text-amber-300">${mon.calo} kcal</b></span>
+                <span class="px-2 py-0.5 rounded-md bg-white/5 border border-white/5">Caffeine: <b>${mon.caffeine}</b></span>
+              </div>
+
+              <!-- Lý do AI gợi ý -->
+              <div class="p-2 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-slate-200 text-[11px] mb-3">
+                <span class="text-emerald-400 font-semibold mr-1">✨ AI chọn:</span>
+                <span>${escapeHtml(lyDo)}</span>
+              </div>
+            </div>
+
+            <!-- Action Button -->
+            <button 
+              onclick="openShopModal('${encodedItem}', '${data.khu_vuc || locationSelect.value}')"
+              class="w-full py-2 rounded-xl bg-gradient-to-r from-emerald-500/20 to-teal-500/20 hover:from-emerald-500/30 hover:to-teal-500/30 border border-emerald-500/30 text-emerald-300 font-semibold text-xs flex items-center justify-center space-x-1.5 transition active:scale-95"
+            >
+              <i class="fa-solid fa-map-location-dot"></i>
+              <span>Xem quán gần nhất (${data.khu_vuc || locationSelect.value})</span>
+            </button>
+          </div>
+        `;
+      });
+
+      msgDiv.innerHTML = `
+        <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-brand-500 to-teal-400 flex items-center justify-center text-white text-sm shadow-md flex-shrink-0 mt-0.5">
+          🍹
+        </div>
+        <div class="w-full space-y-2.5">
+          <!-- Lời nhắn tâm lý của Gemini -->
+          <div class="glass-card rounded-2xl rounded-tl-none p-3.5 text-xs sm:text-sm text-slate-200 border border-white/10 shadow-lg">
+            <p class="font-medium text-emerald-300 mb-1">✨ Lời nhắn từ Mijushi:</p>
+            <p class="text-slate-200 leading-relaxed">${formatBotText(data.loi_nhan || 'Dưới đây là các món cực kỳ chuẩn gu cho bạn:')}</p>
+          </div>
+
+          <!-- Grid các món -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            ${cardsHtml}
+          </div>
+        </div>
+      `;
+
+      chatHistory.appendChild(msgDiv);
+      scrollToBottom();
+    }
+
+    // 3. Open Shop Locator Modal
+    window.openShopModal = function(encodedItem, khuVuc) {
+      const item = JSON.parse(decodeURIComponent(encodedItem));
+      const mon = item.mon;
+      const emoji = EMOJI_MAP[mon.danh_muc] || '🥤';
+
+      modalDrinkIcon.textContent = emoji;
+      modalDrinkName.textContent = mon.ten;
+      modalDrinkPrice.textContent = `~${Number(mon.gia).toLocaleString('vi-VN')} VNĐ`;
+      modalDrinkTemp.textContent = mon.nhiet_do;
+      modalDrinkCalo.textContent = `${mon.calo} kcal`;
+      modalDrinkCaffeine.textContent = mon.caffeine;
+      modalCurrentArea.textContent = `Quanh khu vực: ${khuVuc}`;
+
+      modalShopsList.innerHTML = '';
+      const shops = item.quan_gan_nhat || [];
+
+      if (shops.length === 0) {
+        modalShopsList.innerHTML = `
+          <div class="text-center py-4 text-xs text-slate-400">
+            Chưa tìm thấy quán đối tác gần nhất quanh ${khuVuc}.
+          </div>
+        `;
+      } else {
+        shops.forEach((shop, i) => {
+          const shopDiv = document.createElement('div');
+          shopDiv.className = 'p-3 rounded-2xl bg-white/5 border border-white/10 hover:border-emerald-500/30 transition flex flex-col justify-between';
+          
+          // Generate ShopeeFood / Search URL
+          const shopeeQuery = encodeURIComponent(`${shop.ten_quan} ${mon.ten}`);
+          const shopeeUrl = `https://shopeefood.vn/ha-noi/danh-sach-dia-diem?q=${shopeeQuery}`;
+          const mapQuery = encodeURIComponent(`${shop.ten_quan} ${shop.dia_chi}`);
+          const mapUrl = `https://www.google.com/maps/search/?api=1&query=${mapQuery}`;
+
+          shopDiv.innerHTML = `
+            <div class="mb-2">
+              <div class="flex items-start justify-between">
+                <h5 class="font-bold text-white text-xs sm:text-sm">${i + 1}. ${shop.ten_quan}</h5>
+                <span class="px-2 py-0.5 rounded-lg bg-emerald-500/20 text-emerald-300 font-bold text-[11px] whitespace-nowrap">
+                  📍 ${shop.khoang_cach_hien_thi}
+                </span>
+              </div>
+              <div class="flex items-center space-x-2 text-[11px] text-amber-400 my-1">
+                <span>⭐ ${shop.rating}/5</span>
+                <span class="text-slate-400 font-normal">(${shop.user_ratings_total} lượt đánh giá)</span>
+              </div>
+              <p class="text-[11px] text-slate-300 italic">🏠 ${shop.dia_chi}</p>
+            </div>
+            <div class="flex items-center space-x-2 pt-2 border-t border-white/5">
+              <a href="${shopeeUrl}" target="_blank" class="flex-1 py-1.5 rounded-xl bg-orange-500/20 hover:bg-orange-500/30 border border-orange-500/30 text-orange-300 font-semibold text-center text-xs flex items-center justify-center space-x-1.5 transition">
+                <i class="fa-solid fa-motorcycle"></i>
+                <span>Đặt ShopeeFood</span>
+              </a>
+              <a href="${mapUrl}" target="_blank" class="px-3 py-1.5 rounded-xl glass-card hover:bg-slate-800 text-slate-300 text-xs flex items-center justify-center transition" title="Mở bản đồ">
+                <i class="fa-solid fa-arrow-up-right-from-square"></i>
+              </a>
+            </div>
+          `;
+          modalShopsList.appendChild(shopDiv);
+        });
+      }
+
+      shopModal.classList.remove('hidden');
+      shopModal.classList.add('flex');
+    };
+
+    // Modal Close
+    btnCloseModal.addEventListener('click', () => {
+      shopModal.classList.add('hidden');
+      shopModal.classList.remove('flex');
+    });
+    shopModal.addEventListener('click', (e) => {
+      if (e.target === shopModal) {
+        shopModal.classList.add('hidden');
+        shopModal.classList.remove('flex');
+      }
+    });
+
+    // 4. Menu Drawer Controls
+    btnOpenMenu.addEventListener('click', () => {
+      menuDrawer.classList.remove('translate-x-full');
+    });
+    btnCloseDrawer.addEventListener('click', () => {
+      menuDrawer.classList.add('translate-x-full');
+    });
+
+    // Category Tabs in Drawer
+    document.querySelectorAll('.cat-pill').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.cat-pill').forEach(b => {
+          b.className = 'cat-pill px-2.5 py-1 rounded-lg glass-card text-slate-400 whitespace-nowrap';
+        });
+        btn.className = 'cat-pill px-2.5 py-1 rounded-lg bg-emerald-500/20 text-emerald-300 font-medium whitespace-nowrap';
+        currentCategory = btn.getAttribute('data-cat');
+        filterDrawerMenu();
+      });
+    });
+
+    menuSearch.addEventListener('input', () => {
+      filterDrawerMenu();
+    });
+
+    function filterDrawerMenu() {
+      const q = menuSearch.value.toLowerCase().trim();
+      const filtered = fullMenu.filter(m => {
+        const matchCat = (currentCategory === 'all') || (m.danh_muc === currentCategory);
+        const matchQuery = !q || m.ten.toLowerCase().includes(q) || m.huong_vi.toLowerCase().includes(q) || m.mo_ta.toLowerCase().includes(q);
+        return matchCat && matchQuery;
+      });
+      renderDrawerMenu(filtered);
+    }
+
+    function renderDrawerMenu(items) {
+      drawerMenuList.innerHTML = '';
+      if (items.length === 0) {
+        drawerMenuList.innerHTML = '<div class="text-center text-slate-400 text-xs py-8">Không tìm thấy món phù hợp</div>';
+        return;
+      }
+
+      items.forEach(m => {
+        const emoji = EMOJI_MAP[m.danh_muc] || '🥤';
+        const card = document.createElement('div');
+        card.className = 'glass-card rounded-2xl p-3 border border-white/5 hover:border-emerald-500/30 transition';
+        card.innerHTML = `
+          <div class="flex items-start justify-between mb-1.5">
+            <div class="flex items-center space-x-2">
+              <span class="text-lg">${emoji}</span>
+              <div>
+                <h5 class="font-bold text-white text-xs">${m.ten}</h5>
+                <span class="text-[10px] text-slate-400 uppercase font-medium">${m.danh_muc} • ${m.nhiet_do}</span>
+              </div>
+            </div>
+            <span class="text-emerald-400 font-bold text-xs">~${Number(m.gia).toLocaleString('vi-VN')}đ</span>
+          </div>
+          <p class="text-[11px] text-slate-300 mb-2 line-clamp-2">${m.mo_ta}</p>
+          <div class="flex items-center justify-between pt-1 border-t border-white/5">
+            <span class="text-[10px] text-amber-300">🔥 ${m.calo} kcal • Caffeine: ${m.caffeine}</span>
+            <button 
+              onclick="askAIAboutDrink('${m.ten}')" 
+              class="px-2.5 py-1 rounded-lg bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 text-[10px] font-semibold transition"
+            >
+              Hỏi AI món này ✨
+            </button>
+          </div>
+        `;
+        drawerMenuList.appendChild(card);
+      });
+    }
+
+    window.askAIAboutDrink = function(drinkName) {
+      menuDrawer.classList.add('translate-x-full');
+      chatInput.value = `Tư vấn cho mình về món ${drinkName} và tìm quán gần nhất`;
+      chatForm.dispatchEvent(new Event('submit'));
+    };
+
+    // 5. Quick Mood Pills Click Handler
+    document.querySelectorAll('.mood-pill').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const text = btn.getAttribute('data-text');
+        chatInput.value = text;
+        chatForm.dispatchEvent(new Event('submit'));
+      });
+    });
+
+    // 6. Clear Chat
+    btnClearChat.addEventListener('click', () => {
+      chatHistory.innerHTML = `
+        <div class="flex items-start space-x-3 max-w-2xl">
+          <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-brand-500 to-teal-400 flex items-center justify-center text-white text-base shadow-md flex-shrink-0 mt-0.5">
+            🍹
+          </div>
+          <div class="glass-card rounded-2xl rounded-tl-none p-4 text-sm text-slate-200 border border-white/10 leading-relaxed shadow-lg">
+            <p class="font-semibold text-emerald-400 mb-1">Đã làm mới cuộc trò chuyện!</p>
+            <p class="text-slate-300 text-[13px]">Bạn đang muốn thưởng thức ly nước thế nào hôm nay?</p>
+          </div>
+        </div>
+      `;
+    });
+
+    // Utilities
+    function scrollToBottom() {
+      chatHistory.scrollTop = chatHistory.scrollHeight;
+    }
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+    function formatBotText(text) {
+      if (!text) return '';
+      return escapeHtml(text).replace(/\n/g, '<br>');
+    }
+  </script>
+</body>
+</html>

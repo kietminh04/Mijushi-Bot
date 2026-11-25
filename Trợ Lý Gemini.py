@@ -192,5 +192,5 @@ if __name__ == "__main__":
     tro_ly = TroLyGemini()
 
     print("=== TEST 1: GỢI Ý KOI THÉ ===")
-    r1 = tro_ly.xu_ly_tin_nhan("KOI Thé có món nào best seller và ít đường không?", "Kiệt")
+    r1 = tro_ly.xu_ly_tin_nhan("KOI Thé có món nào best seller và ít đường không?", "bạn")
     print(json.dumps(r1, ensure_ascii=False, indent=2))

@@ -211,6 +211,9 @@
         <span class="text-slate-400 font-medium whitespace-nowrap text-[11px] mr-1">
           <i class="fa-solid fa-wand-magic-sparkles text-warm-400 mr-1"></i>Gu nhanh:
         </span>
+        <button id="btnBestSellerPill" type="button" class="px-2.5 py-1 rounded-lg glass-card bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/30 text-amber-200 font-medium whitespace-nowrap transition">
+          ⭐ Best Seller theo quán
+        </button>
         <button class="mood-pill px-2.5 py-1 rounded-lg glass-card hover:bg-emerald-500/20 hover:border-emerald-500/30 text-slate-300 whitespace-nowrap transition" data-text="cho t cái gì mát mát thanh nhiệt giải khát">
           ❄️ Mát lạnh giải nhiệt
         </button>
@@ -219,9 +222,6 @@
         </button>
         <button class="mood-pill px-2.5 py-1 rounded-lg glass-card hover:bg-teal-500/20 hover:border-teal-500/30 text-slate-300 whitespace-nowrap transition" data-text="thèm trà sữa béo ngậy trân châu hoàng kim xả stress">
           🧋 Trà sữa trân châu
-        </button>
-        <button class="mood-pill px-2.5 py-1 rounded-lg glass-card hover:bg-amber-500/20 hover:border-amber-500/30 text-amber-200 whitespace-nowrap transition" data-text="gợi ý giúp mình top món best seller của KOI Thé kèm size và mức đường đá">
-          ⭐ Best Seller KOI Thé
         </button>
         <button class="mood-pill px-2.5 py-1 rounded-lg glass-card hover:bg-green-500/20 hover:border-green-500/30 text-slate-300 whitespace-nowrap transition" data-text="có món gì healthy ít calo hỗ trợ giảm cân đẹp da không">
           🌱 Detox ít calo
@@ -266,7 +266,7 @@
               type="text" 
               id="chatInput" 
               autocomplete="off"
-              placeholder="Thèm gì cứ nhắn Mijushi (ví dụ: 'trời nóng uống trà gì mát', 'KOI Thé best seller quanh Bách Khoa')..." 
+              placeholder="Thèm gì cứ nhắn Mijushi (ví dụ: 'trời nóng uống trà gì mát', 'gợi ý đồ uống best seller quanh đây')..." 
               class="w-full glass-input text-slate-100 placeholder-slate-400 text-xs sm:text-sm rounded-xl py-3 pl-4 pr-10 outline-none transition"
             >
             <button type="button" id="btnEmoji" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-warm-400 transition text-sm">
@@ -284,7 +284,6 @@
         </form>
         <div class="flex justify-between items-center text-[10px] text-slate-400 mt-2 px-1">
           <span>💡 Bạn có thể hỏi theo tâm trạng, calo, vị ấm hay order hộ bạn bè</span>
-          <span>Phát triển bởi Vũ Minh Kiệt • HUST</span>
         </div>
       </div>
 
@@ -490,7 +489,7 @@
           <div class="flex items-center space-x-2 min-w-0">
             <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse flex-shrink-0"></span>
             <span class="text-slate-400 flex-shrink-0">Đang chọn:</span>
-            <span id="activePinSummary" class="font-semibold text-emerald-300 truncate">Bách Khoa (HUST)</span>
+            <span id="activePinSummary" class="font-semibold text-emerald-300 truncate">Bách Khoa (Hai Bà Trưng)</span>
           </div>
           <div class="flex items-center flex-wrap gap-1.5 flex-shrink-0">
             <button type="button" class="quick-save-btn px-2 py-1 rounded-lg bg-white/5 hover:bg-emerald-500/20 border border-white/10 hover:border-emerald-500/30 text-slate-200 text-[11px] transition" data-preset-label="🏫 Trường học">
@@ -533,6 +532,32 @@
     </div>
   </div>
 
+  <!-- 7. BRAND BEST-SELLER PICKER MODAL (KHI BẤM BEST SELLER MÀ CHƯA CHỌN QUÁN) -->
+  <div id="brandBestSellerModal" class="fixed inset-0 z-50 bg-black/75 backdrop-blur-md hidden items-center justify-center p-3 sm:p-4">
+    <div class="glass-panel w-full max-w-lg rounded-3xl p-4 sm:p-5 border border-white/15 shadow-2xl relative flex flex-col max-h-[85vh]">
+      <div class="flex items-start justify-between gap-3 pb-3 border-b border-white/10">
+        <div>
+          <h3 class="text-sm sm:text-base font-bold text-white flex items-center gap-2">
+            <span>⭐ Chọn quán để xem Best Seller</span>
+          </h3>
+          <p class="text-[11px] text-slate-400 mt-0.5">Chọn một chuỗi cửa hàng bên dưới hoặc để Mijushi chọn ngẫu nhiên giúp bạn</p>
+        </div>
+        <button id="btnCloseBrandPicker" type="button" class="w-8 h-8 rounded-full glass-card hover:bg-rose-500/20 text-slate-300 hover:text-rose-300 flex items-center justify-center transition flex-shrink-0">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div id="brandPickerGrid" class="flex-1 overflow-y-auto grid grid-cols-2 gap-2 py-3 pr-1"></div>
+
+      <div class="pt-3 border-t border-white/10 flex items-center justify-between gap-2">
+        <button id="btnRandomBrandBestSeller" type="button" class="flex-1 py-2.5 px-3 rounded-xl bg-gradient-to-r from-amber-500/25 to-emerald-500/25 hover:from-amber-500/35 hover:to-emerald-500/35 border border-amber-500/35 text-amber-200 font-semibold text-xs flex items-center justify-center gap-2 transition">
+          <i class="fa-solid fa-shuffle"></i>
+          <span>Không chọn quán • Gợi ý ngẫu nhiên</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- JAVASCRIPT CLIENT LOGIC -->
   <script>
     const FALLBACK_DRINK_IMG = 'https://images.unsplash.com/photo-1551024709-8f23befc6f87?w=600&auto=format&fit=crop&q=80';
@@ -540,7 +565,7 @@
     const ACTIVE_LOC_KEY = 'mijushi_active_location_v1';
 
     const PRESET_LOCATIONS = [
-      { key: "Bách Khoa", label: "📍 Bách Khoa (HUST)", lat: 21.0056, lon: 105.8433 },
+      { key: "Bách Khoa", label: "📍 Bách Khoa (Hai Bà Trưng)", lat: 21.0056, lon: 105.8433 },
       { key: "Hoàn Kiếm", label: "📍 Hoàn Kiếm (Phố Cổ)", lat: 21.0285, lon: 105.8542 },
       { key: "Vũ Tông Phan", label: "📍 Vũ Tông Phan (Thanh Xuân)", lat: 20.9961, lon: 105.8172 },
       { key: "Đống Đa", label: "📍 Đống Đa (Xã Đàn)", lat: 21.0175, lon: 105.8295 },
@@ -960,7 +985,16 @@
       brandSelect.value = selectedBrand;
     }
 
+    function updateBestSellerPillLabel() {
+      const pill = document.getElementById('btnBestSellerPill');
+      if (!pill) return;
+      pill.textContent = (selectedBrand && selectedBrand !== 'all')
+        ? `⭐ Best Seller ${selectedBrand}`
+        : '⭐ Best Seller theo quán';
+    }
+
     function updateDrawerHeaderAndCounts() {
+      updateBestSellerPillLabel();
       const brandItems = selectedBrand === 'all'
         ? fullMenu
         : fullMenu.filter(m => m.thuong_hieu === selectedBrand);
@@ -1822,7 +1856,89 @@
       }
     });
 
-    // 7. Quick Mood Pills Click Handler
+    // 7. Quick Mood Pills & Dynamic Best Seller Pill Handler
+    const btnBestSellerPill = document.getElementById('btnBestSellerPill');
+    const brandBestSellerModal = document.getElementById('brandBestSellerModal');
+    const btnCloseBrandPicker = document.getElementById('btnCloseBrandPicker');
+    const brandPickerGrid = document.getElementById('brandPickerGrid');
+    const btnRandomBrandBestSeller = document.getElementById('btnRandomBrandBestSeller');
+
+    function askBestSellerForBrand(brandName) {
+      if (!brandName) return;
+      selectedBrand = brandName;
+      if (brandSelect) brandSelect.value = brandName;
+      updateDrawerHeaderAndCounts();
+      filterDrawerMenu();
+      chatInput.value = brandName === 'KOI Thé'
+        ? 'gợi ý giúp mình top món best seller của KOI Thé kèm size và mức đường đá'
+        : `gợi ý giúp mình top món best seller của ${brandName}`;
+      chatForm.dispatchEvent(new Event('submit'));
+    }
+
+    function pickRandomBrandName() {
+      const pool = brandList.length > 0
+        ? brandList.map(b => b.thuong_hieu)
+        : [...new Set(fullMenu.map(m => m.thuong_hieu).filter(Boolean))];
+      if (pool.length === 0) return 'KOI Thé';
+      return pool[Math.floor(Math.random() * pool.length)];
+    }
+
+    function openBrandBestSellerPicker() {
+      if (!brandBestSellerModal || !brandPickerGrid) return;
+      const list = brandList.length > 0
+        ? brandList
+        : [...new Set(fullMenu.map(m => m.thuong_hieu).filter(Boolean))].map(th => ({ thuong_hieu: th, so_mon: 0, so_chi_nhanh: 0 }));
+
+      brandPickerGrid.innerHTML = '';
+      list.forEach(b => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'p-2.5 rounded-2xl glass-card hover:bg-amber-500/15 border border-white/10 hover:border-amber-500/35 text-left transition';
+        btn.innerHTML = `
+          <div class="font-bold text-white text-xs truncate">${escapeHtml(b.thuong_hieu)}</div>
+          <div class="text-[10px] text-slate-400 mt-0.5">${b.so_mon || ''} món • ${b.so_chi_nhanh || ''} quán</div>
+        `;
+        btn.addEventListener('click', () => {
+          closeBrandBestSellerPicker();
+          askBestSellerForBrand(b.thuong_hieu);
+        });
+        brandPickerGrid.appendChild(btn);
+      });
+
+      brandBestSellerModal.classList.remove('hidden');
+      brandBestSellerModal.classList.add('flex');
+    }
+
+    function closeBrandBestSellerPicker() {
+      if (!brandBestSellerModal) return;
+      brandBestSellerModal.classList.add('hidden');
+      brandBestSellerModal.classList.remove('flex');
+    }
+
+    if (btnBestSellerPill) {
+      btnBestSellerPill.addEventListener('click', () => {
+        if (selectedBrand && selectedBrand !== 'all') {
+          askBestSellerForBrand(selectedBrand);
+        } else {
+          openBrandBestSellerPicker();
+        }
+      });
+    }
+    if (btnCloseBrandPicker) {
+      btnCloseBrandPicker.addEventListener('click', closeBrandBestSellerPicker);
+    }
+    if (btnRandomBrandBestSeller) {
+      btnRandomBrandBestSeller.addEventListener('click', () => {
+        closeBrandBestSellerPicker();
+        askBestSellerForBrand(pickRandomBrandName());
+      });
+    }
+    if (brandBestSellerModal) {
+      brandBestSellerModal.addEventListener('click', (e) => {
+        if (e.target === brandBestSellerModal) closeBrandBestSellerPicker();
+      });
+    }
+
     document.querySelectorAll('.mood-pill').forEach(btn => {
       btn.addEventListener('click', () => {
         const text = btn.getAttribute('data-text');

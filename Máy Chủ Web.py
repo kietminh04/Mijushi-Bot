@@ -452,18 +452,45 @@ async def chat(req: ChatRequest):
         )
 
 @app.get("/api/menu")
-async def menu():
+async def menu(thuong_hieu: Optional[str] = Query(None, description="Lọc theo tên chuỗi cửa hàng")):
     try:
         if not csdl:
             return JSONResponse(status_code=500, content={"error": "Cơ sở dữ liệu không khả dụng"})
 
-        danh_sach = csdl.lay_tat_ca_do_uong()
-        for m in danh_sach:
+        tat_ca = csdl.lay_tat_ca_do_uong()
+        for m in tat_ca:
             gan_hinh_anh_do_uong(m)
+
+        # Thống kê số món & số chi nhánh theo từng chuỗi từ SQLite
+        brand_counts: Dict[str, int] = {}
+        for m in tat_ca:
+            th = m.get("thuong_hieu") or "Hệ thống"
+            brand_counts[th] = brand_counts.get(th, 0) + 1
+
+        shop_counts: Dict[str, int] = {}
+        conn = csdl.khoi_tao_ket_noi()
+        try:
+            for r in conn.execute("SELECT thuong_hieu, COUNT(*) AS cnt FROM ChiNhanhQuan GROUP BY thuong_hieu"):
+                shop_counts[r["thuong_hieu"]] = int(r["cnt"])
+        finally:
+            conn.close()
+
+        danh_sach_chuoi = [
+            {"thuong_hieu": th, "so_mon": cnt, "so_chi_nhanh": shop_counts.get(th, 0)}
+            for th, cnt in sorted(brand_counts.items(), key=lambda kv: (-shop_counts.get(kv[0], 0), -kv[1], kv[0]))
+        ]
+
+        danh_sach_loc = (
+            [m for m in tat_ca if (m.get("thuong_hieu") or "").lower() == thuong_hieu.strip().lower()]
+            if thuong_hieu and thuong_hieu.strip() and thuong_hieu.strip().lower() != "all"
+            else tat_ca
+        )
+
         tuy_chon_koi = csdl.lay_tuy_chon_thuong_hieu("KOI Thé") if hasattr(csdl, "lay_tuy_chon_thuong_hieu") else {}
         return {
-            "danh_sach_do_uong": danh_sach,
-            "tong_so_mon": len(danh_sach),
+            "danh_sach_do_uong": danh_sach_loc,
+            "tong_so_mon": len(tat_ca),
+            "danh_sach_chuoi": danh_sach_chuoi,
             "tuy_chon_koi_the": tuy_chon_koi,
         }
     except Exception as e:

@@ -369,18 +369,31 @@
 
     <!-- Search & Filter Tabs in Drawer -->
     <div class="p-3 border-b border-white/5 space-y-2 flex-shrink-0 bg-slate-900/40">
+      <!-- Brand / Store Selector -->
+      <div class="flex items-center space-x-2">
+        <div class="relative flex-1">
+          <i class="fa-solid fa-store absolute left-2.5 top-1/2 -translate-y-1/2 text-amber-400 text-xs pointer-events-none"></i>
+          <select
+            id="brandSelect"
+            class="w-full glass-input text-xs font-semibold rounded-xl py-2 pl-8 pr-3 text-slate-100 bg-slate-900/90 outline-none cursor-pointer"
+          >
+            <option value="all" class="bg-slate-900 text-slate-100">🏪 Tất cả chuỗi cửa hàng</option>
+          </select>
+        </div>
+        <span id="brandBranchBadge" class="hidden px-2 py-1.5 rounded-xl bg-amber-500/15 border border-amber-500/25 text-amber-300 text-[10px] font-semibold whitespace-nowrap"></span>
+      </div>
+
       <div class="relative">
         <input 
           type="text" 
           id="menuSearch" 
-          placeholder="Tìm tên món, KOI Thé, kiều mạch, macchiato..."
+          placeholder="Tìm tên món, hương vị (ô long, cà phê, matcha...)..."
           class="w-full glass-input text-xs rounded-xl py-2 pl-8 pr-3 text-slate-200 outline-none"
         >
         <i class="fa-solid fa-magnifying-glass absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
       </div>
       <div class="flex items-center space-x-1.5 overflow-x-auto text-[11px] pb-1" id="categoryFilterContainer">
         <button id="catAllBtn" class="cat-pill px-2.5 py-1 rounded-lg bg-emerald-500/20 text-emerald-300 font-medium whitespace-nowrap" data-cat="all">Tất cả</button>
-        <button id="catKoiBtn" class="cat-pill px-2.5 py-1 rounded-lg glass-card text-amber-300 whitespace-nowrap" data-cat="KOI_ALL">🧋 KOI Thé</button>
         <button class="cat-pill px-2.5 py-1 rounded-lg glass-card text-slate-400 whitespace-nowrap" data-cat="KOI_BEST">⭐ Best Seller</button>
         <button class="cat-pill px-2.5 py-1 rounded-lg glass-card text-slate-400 whitespace-nowrap" data-cat="Cà Phê">Cà Phê</button>
         <button class="cat-pill px-2.5 py-1 rounded-lg glass-card text-slate-400 whitespace-nowrap" data-cat="Trà Sữa">Trà Sữa</button>
@@ -546,6 +559,8 @@
 
     // State
     let fullMenu = [];
+    let brandList = [];
+    let selectedBrand = 'all';
     let koiOptions = null;
     let currentCategory = 'all';
     let allShops = [];
@@ -574,8 +589,9 @@
     const btnOpenMenu = document.getElementById('btnOpenMenu');
     const menuToggleLabel = document.getElementById('menuToggleLabel');
     const drawerMenuTitle = document.getElementById('drawerMenuTitle');
+    const brandSelect = document.getElementById('brandSelect');
+    const brandBranchBadge = document.getElementById('brandBranchBadge');
     const catAllBtn = document.getElementById('catAllBtn');
-    const catKoiBtn = document.getElementById('catKoiBtn');
     const btnCloseDrawer = document.getElementById('btnCloseDrawer');
     const menuDrawer = document.getElementById('menuDrawer');
     const drawerMenuList = document.getElementById('drawerMenuList');
@@ -917,7 +933,72 @@
         const l = Math.round(mon.gia_l / 1000);
         return compact ? `${s}k–${l}k` : `S: ${s}k • M: ${m}k • L: ${l}k VNĐ`;
       }
+      if (mon && mon.gia_m && mon.gia_l) {
+        const m = Math.round(mon.gia_m / 1000);
+        const l = Math.round(mon.gia_l / 1000);
+        return compact ? `${m}k–${l}k` : `M: ${m}k • L: ${l}k VNĐ`;
+      }
       return `~${Number((mon && mon.gia) || 0).toLocaleString('vi-VN')}${compact ? 'đ' : ' VNĐ'}`;
+    }
+
+    function renderBrandSelectOptions() {
+      if (!brandSelect) return;
+      brandSelect.innerHTML = '';
+      const optAll = document.createElement('option');
+      optAll.value = 'all';
+      optAll.className = 'bg-slate-900 text-slate-100';
+      optAll.textContent = `🏪 Tất cả ${brandList.length} chuỗi (${fullMenu.length} món)`;
+      brandSelect.appendChild(optAll);
+
+      brandList.forEach(b => {
+        const opt = document.createElement('option');
+        opt.value = b.thuong_hieu;
+        opt.className = 'bg-slate-900 text-slate-100';
+        opt.textContent = `${b.thuong_hieu} (${b.so_mon} món • ${b.so_chi_nhanh} quán)`;
+        brandSelect.appendChild(opt);
+      });
+      brandSelect.value = selectedBrand;
+    }
+
+    function updateDrawerHeaderAndCounts() {
+      const brandItems = selectedBrand === 'all'
+        ? fullMenu
+        : fullMenu.filter(m => m.thuong_hieu === selectedBrand);
+
+      if (catAllBtn) {
+        catAllBtn.textContent = `Tất cả (${brandItems.length})`;
+      }
+      if (drawerMenuTitle) {
+        drawerMenuTitle.textContent = selectedBrand === 'all'
+          ? `Menu ${fullMenu.length} Món (${brandList.length} Chuỗi)`
+          : `Menu ${selectedBrand} (${brandItems.length} Món)`;
+      }
+      if (brandBranchBadge) {
+        if (selectedBrand === 'all') {
+          brandBranchBadge.classList.add('hidden');
+        } else {
+          const info = brandList.find(b => b.thuong_hieu === selectedBrand);
+          const branches = info ? info.so_chi_nhanh : 0;
+          brandBranchBadge.textContent = `${branches} chi nhánh`;
+          brandBranchBadge.classList.remove('hidden');
+        }
+      }
+    }
+
+    function openMenuForBrand(brandName) {
+      if (!brandName) return;
+      selectedBrand = brandName;
+      if (brandSelect) brandSelect.value = brandName;
+      currentCategory = 'all';
+      document.querySelectorAll('.cat-pill').forEach(b => {
+        b.className = b.getAttribute('data-cat') === 'all'
+          ? 'cat-pill px-2.5 py-1 rounded-lg bg-emerald-500/20 text-emerald-300 font-medium whitespace-nowrap'
+          : 'cat-pill px-2.5 py-1 rounded-lg glass-card text-slate-400 whitespace-nowrap';
+      });
+      updateDrawerHeaderAndCounts();
+      filterDrawerMenu();
+      closeFullMapModal();
+      menuDrawer.classList.remove('translate-x-full');
     }
 
     function renderKoiOptionsInModal(mon) {
@@ -954,11 +1035,19 @@
         }
         if (menuRes.danh_sach_do_uong) {
           fullMenu = menuRes.danh_sach_do_uong;
-          const koiCount = fullMenu.filter(m => m.thuong_hieu === 'KOI Thé').length;
-          if (menuToggleLabel) menuToggleLabel.textContent = `Menu (${fullMenu.length} Món)`;
-          if (drawerMenuTitle) drawerMenuTitle.textContent = `Danh Mục ${fullMenu.length} Đồ Uống`;
-          if (catAllBtn) catAllBtn.textContent = `Tất cả (${fullMenu.length})`;
-          if (catKoiBtn) catKoiBtn.textContent = `🧋 KOI Thé (${koiCount})`;
+          if (Array.isArray(menuRes.danh_sach_chuoi) && menuRes.danh_sach_chuoi.length > 0) {
+            brandList = menuRes.danh_sach_chuoi;
+          } else {
+            const counts = {};
+            fullMenu.forEach(m => {
+              const th = m.thuong_hieu || 'Hệ thống';
+              counts[th] = (counts[th] || 0) + 1;
+            });
+            brandList = Object.entries(counts).map(([thuong_hieu, so_mon]) => ({ thuong_hieu, so_mon, so_chi_nhanh: 0 }));
+          }
+          if (menuToggleLabel) menuToggleLabel.textContent = `Menu (${brandList.length} Quán • ${fullMenu.length} Món)`;
+          renderBrandSelectOptions();
+          updateDrawerHeaderAndCounts();
           renderDrawerMenu(fullMenu);
         }
         if (shopsRes.danh_sach_quan) {
@@ -1166,8 +1255,8 @@
                     </span>
                   </div>
                   <div class="flex items-center flex-wrap gap-1 mt-0.5">
+                    ${mon.thuong_hieu ? `<span class="text-[9px] px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 font-semibold">${escapeHtml(mon.thuong_hieu)}</span>` : ''}
                     <span class="text-[10px] text-slate-400 uppercase tracking-wide font-medium">${escapeHtml(mon.nhom_goc || mon.danh_muc)}</span>
-                    ${mon.thuong_hieu === 'KOI Thé' ? '<span class="text-[9px] px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 font-semibold">KOI Thé</span>' : ''}
                     ${mon.best_seller ? '<span class="text-[9px] px-1.5 py-0.5 rounded bg-rose-500/20 text-rose-300 font-semibold">⭐ Best Seller</span>' : ''}
                   </div>
                   
@@ -1236,7 +1325,7 @@
 
       modalDrinkImg.src = mon.hinh_anh || FALLBACK_DRINK_IMG;
       modalDrinkName.textContent = mon.ten;
-      modalDrinkCategory.textContent = mon.thuong_hieu === 'KOI Thé' ? `KOI Thé • ${mon.nhom_goc || mon.danh_muc}` : mon.danh_muc;
+      modalDrinkCategory.textContent = mon.thuong_hieu ? `${mon.thuong_hieu} • ${mon.nhom_goc || mon.danh_muc}` : mon.danh_muc;
       modalDrinkPrice.textContent = formatDrinkPriceLabel(mon, false);
       modalDrinkTemp.textContent = mon.nhiet_do;
       modalDrinkCalo.textContent = `${mon.calo} kcal`;
@@ -1381,8 +1470,9 @@
           <small>Thương hiệu: ${escapeHtml(s.thuong_hieu || '')} • Quận: ${escapeHtml(s.quan || '')}</small><br>
           ⭐ ${escapeHtml(String(s.rating))}/5 (${escapeHtml(String(s.user_ratings_total))} đánh giá)<br>
           🏠 ${escapeHtml(s.dia_chi)}<br>
-          <div style="margin-top: 5px;">
+          <div style="margin-top: 5px; display: flex; flex-direction: column; gap: 4px;">
             <a href="${escapeHtml(popupShopee)}" target="_blank" rel="noopener noreferrer" style="color: #f97316; font-weight: bold;">🛵 Đặt / Tìm trên ShopeeFood</a>
+            <button type="button" class="btn-map-brand-menu" data-brand="${escapeHtml(s.thuong_hieu || '')}" style="text-align: left; color: #34d399; font-weight: 600; background: none; border: none; padding: 0; cursor: pointer;">📖 Xem menu ${escapeHtml(s.thuong_hieu || 'quán này')}</button>
           </div>
         `);
       });
@@ -1614,6 +1704,27 @@
       menuDrawer.classList.add('translate-x-full');
     });
 
+    if (brandSelect) {
+      brandSelect.addEventListener('change', () => {
+        selectedBrand = brandSelect.value || 'all';
+        currentCategory = 'all';
+        document.querySelectorAll('.cat-pill').forEach(b => {
+          b.className = b.getAttribute('data-cat') === 'all'
+            ? 'cat-pill px-2.5 py-1 rounded-lg bg-emerald-500/20 text-emerald-300 font-medium whitespace-nowrap'
+            : 'cat-pill px-2.5 py-1 rounded-lg glass-card text-slate-400 whitespace-nowrap';
+        });
+        updateDrawerHeaderAndCounts();
+        filterDrawerMenu();
+      });
+    }
+
+    document.addEventListener('click', (e) => {
+      const btn = e.target.closest('.btn-map-brand-menu');
+      if (!btn) return;
+      const b = btn.getAttribute('data-brand');
+      if (b) openMenuForBrand(b);
+    });
+
     // Category Tabs in Drawer
     document.querySelectorAll('.cat-pill').forEach(btn => {
       btn.addEventListener('click', () => {
@@ -1633,9 +1744,9 @@
     function filterDrawerMenu() {
       const q = menuSearch.value.toLowerCase().trim();
       const filtered = fullMenu.filter(m => {
+        const matchBrand = (selectedBrand === 'all') || (m.thuong_hieu === selectedBrand);
         let matchCat = false;
         if (currentCategory === 'all') matchCat = true;
-        else if (currentCategory === 'KOI_ALL') matchCat = (m.thuong_hieu === 'KOI Thé');
         else if (currentCategory === 'KOI_BEST') matchCat = Boolean(m.best_seller);
         else matchCat = (m.danh_muc === currentCategory);
 
@@ -1646,7 +1757,7 @@
           (m.nhom_goc || '').toLowerCase().includes(q) ||
           (m.huong_vi || '').toLowerCase().includes(q) ||
           (m.mo_ta || '').toLowerCase().includes(q);
-        return matchCat && matchQuery;
+        return matchBrand && matchCat && matchQuery;
       });
       renderDrawerMenu(filtered);
     }
@@ -1654,14 +1765,15 @@
     function renderDrawerMenu(items) {
       drawerMenuList.innerHTML = '';
       if (items.length === 0) {
-        drawerMenuList.innerHTML = '<div class="text-center text-slate-400 text-xs py-8">Không tìm thấy món phù hợp</div>';
+        drawerMenuList.innerHTML = '<div class="text-center text-slate-400 text-xs py-8">Không tìm thấy món phù hợp trong cửa hàng này</div>';
         return;
       }
 
       items.forEach(m => {
         const card = document.createElement('div');
         card.className = 'glass-card rounded-2xl p-3 border border-white/5 hover:border-emerald-500/30 transition flex space-x-3 items-center';
-        const subTag = m.thuong_hieu === 'KOI Thé' ? `KOI Thé • ${m.nhom_goc || m.danh_muc}` : m.danh_muc;
+        const brandPrefix = selectedBrand === 'all' && m.thuong_hieu ? `${m.thuong_hieu} • ` : '';
+        const subTag = `${brandPrefix}${m.nhom_goc || m.danh_muc}`;
         const bsTag = m.best_seller ? ' • ⭐' : '';
         card.innerHTML = `
           <img
@@ -1684,6 +1796,7 @@
               <button
                 type="button"
                 data-drink-name="${escapeHtml(m.ten)}"
+                data-drink-brand="${escapeHtml(m.thuong_hieu || '')}"
                 class="btn-ask-ai-drink px-2 py-0.5 rounded-lg bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 text-[10px] font-semibold transition"
               >
                 Hỏi AI ✨
@@ -1699,9 +1812,12 @@
       const btn = e.target.closest('.btn-ask-ai-drink');
       if (!btn) return;
       const drinkName = btn.getAttribute('data-drink-name');
+      const drinkBrand = btn.getAttribute('data-drink-brand');
       if (drinkName) {
         menuDrawer.classList.add('translate-x-full');
-        chatInput.value = `Tư vấn cho mình về món ${drinkName} và tìm quán gần nhất`;
+        chatInput.value = drinkBrand
+          ? `Tư vấn cho mình món ${drinkName} của ${drinkBrand} và tìm quán gần nhất`
+          : `Tư vấn cho mình về món ${drinkName} và tìm quán gần nhất`;
         chatForm.dispatchEvent(new Event('submit'));
       }
     });

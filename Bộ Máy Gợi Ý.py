@@ -51,6 +51,27 @@ TU_KHOA_QUY_TAC = {
     "thanh_mat_the": ["thanh mát", "mát", "mát mát", "mát mẻ", "giải nhiệt", "the mát", "bạc hà", "dưa hấu", "cần tây", "trà thảo mộc", "thanh tịnh", "dịu dàng"]
 }
 
+THUONG_HIEU_TU_KHOA = {
+    "KOI Thé": ["koi thé", "koi the", "koi"],
+    "Phê La": ["phê la", "phe la"],
+    "Highlands Coffee": ["highlands", "highland", "phindi"],
+    "Phúc Long": ["phúc long", "phuc long"],
+    "Katinat": ["katinat"],
+    "Mixue": ["mixue"],
+    "Cộng Cà Phê": ["cộng cà phê", "cong ca phe", "cộng cafe", "quán cộng"],
+    "TocoToco": ["tocotoco", "toco"],
+    "Starbucks": ["starbucks", "frappuccino"],
+    "The Coffee House": ["the coffee house", "cloudfee", "nhà cà phê"],
+    "Gong Cha": ["gong cha", "gongcha"],
+    "Ding Tea": ["ding tea", "dingtea"],
+    "The Alley": ["the alley", "deerioca"],
+    "Tiger Sugar": ["tiger sugar"],
+    "AHA Coffee": ["aha coffee", "aha cafe"],
+    "Cà Phê Muối Chú Long": ["chú long", "chu long"],
+    "All Day Coffee": ["all day coffee", "all day"],
+    "Juice Bar Hà Nội": ["boost juice", "true juice", "sogreen", "juice bar"],
+}
+
 
 # ==========================================
 # 2. VECTORIZER NỘI BỘ DỰ PHÒNG (TF-IDF & N-GRAM)
@@ -274,6 +295,13 @@ class BoMayGoiYDoUong:
                 val *= 1000
             intents["ngan_sach_toi_da"] = val
 
+        # Nhận diện chuỗi cửa hàng cụ thể nếu khách nhắc
+        chuoi_khop = []
+        for brand, keywords in THUONG_HIEU_TU_KHOA.items():
+            if any(re.search(rf"(?<!\w){re.escape(kw)}(?!\w)", q_lower) for kw in keywords):
+                chuoi_khop.append(brand)
+        intents["chuoi_duoc_nhac"] = chuoi_khop
+
         return intents
 
     def _tinh_diem_quy_tac(self, mon: Dict[str, Any], intents: Dict[str, Any]) -> Tuple[float, List[str]]:
@@ -310,13 +338,14 @@ class BoMayGoiYDoUong:
             else:
                 bonus -= 0.3
 
-        # 0b. Ưu tiên thương hiệu KOI Thé hoặc Best Seller nếu khách nhắc
-        if intents.get("thuong_hieu_koi"):
-            if mon.get("thuong_hieu") == "KOI Thé":
-                bonus += 0.55
-                ly_do.append("Món chính hãng trong menu KOI Thé")
+        # 0b. Ưu tiên đúng chuỗi cửa hàng khách nhắc hoặc Best Seller
+        chuoi_duoc_nhac = intents.get("chuoi_duoc_nhac") or []
+        if chuoi_duoc_nhac:
+            if mon.get("thuong_hieu") in chuoi_duoc_nhac:
+                bonus += 0.85
+                ly_do.append(f"Món đặc trưng trong menu của {mon.get('thuong_hieu')}")
             else:
-                bonus -= 0.4
+                bonus -= 0.6
 
         if intents.get("best_seller") and mon.get("best_seller"):
             bonus += 0.35

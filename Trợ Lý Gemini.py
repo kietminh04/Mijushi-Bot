@@ -43,19 +43,20 @@ def xây_dung_menu_catalog() -> str:
         logger.warning(f"Không thể nạp catalog động từ SQLite: {e}")
         return ""
 
-    lines = [f"DANH MỤC ĐẦY ĐỦ {len(ds_mon)} MÓN ĐỒ UỐNG TRONG HỆ THỐNG:"]
+    lines = [f"DANH MỤC ĐẦY ĐỦ {len(ds_mon)} MÓN THẬT TỪ 18 CHUỖI CỬA HÀNG TẠI HÀ NỘI:"]
     for idx, m in enumerate(ds_mon, 1):
-        brand = m.get("thuong_hieu") or "Đa thương hiệu"
+        brand = m.get("thuong_hieu") or "Hệ thống"
         if m.get("gia_s") and m.get("gia_m") and m.get("gia_l"):
             gia_str = f"S:{m['gia_s']//1000}k/M:{m['gia_m']//1000}k/L:{m['gia_l']//1000}k"
+        elif m.get("gia_m") and m.get("gia_l"):
+            gia_str = f"M:{m['gia_m']//1000}k/L:{m['gia_l']//1000}k"
         else:
-            gia_str = f"{m['gia']:,}đ"
-        bs = " [BEST SELLER]" if m.get("best_seller") else ""
-        mua = f" | Mùa: {', '.join(m['mua_goi_y'])}" if m.get("mua_goi_y") else ""
+            gia_str = f"{m['gia']//1000}k"
+        bs = " [BS]" if m.get("best_seller") else ""
         nhom = f"/{m['nhom_goc']}" if m.get("nhom_goc") else ""
         lines.append(
-            f"{idx}. [{m['id']}] {m['ten']} ({brand}{nhom}{bs} | {gia_str}, {m['calo']} calo, "
-            f"Nhiệt độ: {m['nhiet_do']}, Caffeine: {m['caffeine']}{mua}) - {m['huong_vi']}"
+            f"{idx}. [{m['id']}] {m['ten']} ({brand}{nhom}{bs} | {gia_str}, {m['calo']}kcal, "
+            f"{m['nhiet_do']}, Caf:{m['caffeine']}) - {m['huong_vi']}"
         )
 
     if koi_opts.get("muc_da") or koi_opts.get("muc_duong") or koi_opts.get("topping"):
@@ -86,7 +87,7 @@ SYSTEM_PROMPT = f"""
 Bạn là Mijushi - trợ lý AI thông minh chuyên tư vấn, gợi ý đồ uống chuẩn gu theo tâm trạng và tự động định vị các chi nhánh quán gần nhất tại Hà Nội.
 BẠN KHÔNG PHẢI LÀ TIỆM BÁN NƯỚC VÀ KHÔNG PHẢI NHÂN VIÊN PHA CHẾ — BẠN LÀ NỀN TẢNG TỔNG HỢP & GỢI Ý ĐỒ UỐNG THÔNG MINH!
 Luôn luôn xưng hô là "mình" và gọi người dùng là "bạn". Giọng văn trẻ trung, ấm áp, tinh tế và lịch sự.
-Nếu người dùng hỏi riêng về **KOI Thé** (hoặc các dòng KOI Thé như Trân Châu Hoàng Kim, Kiều Mạch, Macchiato, Khoai Môn Tươi, Milo O, mức đá/đường, size S/M/L, topping), hãy ưu tiên chọn các mã `KOIxx` tương ứng và lồng ghép gợi ý size, mức đá, mức đường hoặc topping chuẩn KOI Thé vào lời nhắn/lý do. Nếu người dùng hỏi đồ uống nói chung (cà phê, nước ép, sinh tố...) thì kết hợp tự nhiên cả menu hệ thống lẫn KOI Thé sao cho đúng gu nhất!
+Nếu người dùng nhắc tên một chuỗi cửa hàng cụ thể (ví dụ: **KOI Thé, Phê La, Highlands Coffee, Phúc Long, Katinat, Mixue, Cộng Cà Phê, TocoToco, Starbucks, The Coffee House, Gong Cha, Ding Tea, The Alley, Tiger Sugar, AHA Coffee, Cà Phê Muối Chú Long, All Day Coffee, Juice Bar Hà Nội**), hãy CHỈ chọn các mã món thuộc ĐÚNG chuỗi đó. Riêng với **KOI Thé**, ưu tiên gợi ý thêm size S/M/L, mức đá/đường hoặc topping phù hợp nếu khách quan tâm. Nếu người dùng chỉ nêu tâm trạng/hương vị chung (không chỉ định quán), hãy chọn những món chuẩn gu nhất từ tất cả các chuỗi!
 
 {MENU_CATALOG}
 

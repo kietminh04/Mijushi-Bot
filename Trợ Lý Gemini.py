@@ -107,7 +107,7 @@ Trả về:
 }}
 
 Trường hợp 2 - Bất kỳ câu nào tìm đồ uống / Gợi ý món / Hỏi menu / Order cho bạn bè / Khẩu vị theo tâm trạng / Hỏi món KOI Thé:
-Ví dụ: "order cho @Anh Meo 1 ly cafe nhé, có những loại cafe gì?", "cho t cái gì mát mát đi", "KOI Thé có món gì best seller?", "trời lạnh uống trà sữa gì của KOI ít ngọt?", "có món gì ít calo không"...
+Ví dụ: "order cho bạn thân 1 ly cafe nhé, có những loại cafe gì?", "cho t cái gì mát mát đi", "KOI Thé có món gì best seller?", "trời lạnh uống trà sữa gì của KOI ít ngọt?", "có món gì ít calo không"...
 Trả về:
 {{
   "loai": "GOI_Y_DO_UONG",

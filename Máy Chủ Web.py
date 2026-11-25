@@ -325,7 +325,7 @@ def _format_short_vietnamese_address(data: Dict[str, Any]) -> str:
 
 class ChatRequest(BaseModel):
     message: str
-    user_name: Optional[str] = "Kiệt"
+    user_name: Optional[str] = "bạn"
     location: Optional[str] = "Bách Khoa"
     lat: Optional[float] = None
     lon: Optional[float] = None

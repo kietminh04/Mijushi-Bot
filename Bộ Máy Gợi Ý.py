@@ -35,9 +35,11 @@ spec_csdl.loader.exec_module(csdl)
 # ==========================================
 TU_KHOA_QUY_TAC = {
     "danh_muc_ca_phe": ["cà phê", "cafe", "càfe", "caphe", "coffee", "espresso", "cold brew", "bạc xỉu", "bac xiu", "cà phê muối"],
-    "danh_muc_tra_sua": ["trà sữa", "tra sua", "milk tea", "boba", "trân châu", "ô long nướng"],
-    "danh_muc_tra_hoa_qua": ["trà hoa quả", "trà trái cây", "trà hoa cúc", "trà vải", "trà đào", "trà ổi", "mãng cầu"],
-    "danh_muc_nuoc_ep": ["nước ép", "sinh tố", "nuoc ep", "sinh to", "cam vắt", "dưa hấu", "bơ sáp"],
+    "danh_muc_tra_sua": ["trà sữa", "tra sua", "milk tea", "boba", "trân châu", "ô long nướng", "macchiato", "latte", "milo", "khoai môn"],
+    "danh_muc_tra_hoa_qua": ["trà hoa quả", "trà trái cây", "trà hoa cúc", "trà vải", "trà đào", "trà ổi", "mãng cầu", "lục trà", "hồng trà", "kiều mạch", "oolong"],
+    "danh_muc_nuoc_ep": ["nước ép", "sinh tố", "nuoc ep", "sinh to", "cam vắt", "dưa hấu", "bơ sáp", "mật ong chanh"],
+    "thuong_hieu_koi": ["koi", "koi thé", "koi the"],
+    "best_seller": ["best seller", "bestseller", "nổi bật", "ngon nhất", "bán chạy", "đặc trưng"],
     "nhiet_do_nong": ["nóng", "ấm", "ấm bụng", "ấm áp", "giữ ấm", "ngày lạnh", "mùa đông", "mưa lạnh", "se lạnh", "buốt"],
     "nhiet_do_da": ["đá", "lạnh", "mát", "mát mát", "mát mẻ", "mát lạnh", "tê tái", "giải khát", "mát rượi", "nóng bức", "hè", "oi bức", "cháy da", "khát"],
     "giam_can_healthy": ["giảm cân", "eat clean", "healthy", "thanh lọc", "detox", "ít calo", "ít đường", "không đường", "vóc dáng", "đẹp da", "thải độc"],
@@ -78,8 +80,15 @@ class TFIDFTextEngine:
         df_counts = {}
 
         for item in items:
-            corpus_text = f"{item['ten']} {item['danh_muc']} {item['huong_vi']} {item['mo_ta']} " + \
-                          " ".join(item.get("tam_trang", [])) + " " + " ".join(item.get("thoi_tiet", []))
+            corpus_text = (
+                f"{item['ten']} {item.get('ten_tieng_anh') or ''} {item.get('thuong_hieu') or ''} "
+                f"{item.get('nhom_goc') or ''} {item['danh_muc']} {item['huong_vi']} {item['mo_ta']} "
+                + " ".join(item.get("tam_trang", []))
+                + " "
+                + " ".join(item.get("thoi_tiet", []))
+                + " "
+                + " ".join(item.get("mua_goi_y", []))
+            )
             tokens = self._tokenize(corpus_text)
             doc_tokens.append(tokens)
 
@@ -172,8 +181,10 @@ class BoMayGoiYDoUong:
             self.embedding_model = SentenceTransformer(model_name, device=self.device)
 
             texts = [
-                f"{item['ten']} danh mục {item['danh_muc']}, hương vị: {item['huong_vi']}. Mô tả: {item['mo_ta']}. "
-                f"Tâm trạng: {', '.join(item.get('tam_trang', []))}. Thời tiết: {', '.join(item.get('thoi_tiet', []))}."
+                f"{item['ten']} ({item.get('ten_tieng_anh') or ''}) thương hiệu {item.get('thuong_hieu') or ''}, "
+                f"danh mục {item['danh_muc']}, nhóm {item.get('nhom_goc') or ''}, hương vị: {item['huong_vi']}. "
+                f"Mô tả: {item['mo_ta']}. Tâm trạng: {', '.join(item.get('tam_trang', []))}. "
+                f"Thời tiết: {', '.join(item.get('thoi_tiet', []))}."
                 for item in self.ds_do_uong
             ]
             self.doc_embeddings = self.embedding_model.encode(texts, convert_to_tensor=True, device=self.device)
@@ -298,6 +309,18 @@ class BoMayGoiYDoUong:
                 ly_do.append("Nước ép và sinh tố tươi mát bổ sung vitamin")
             else:
                 bonus -= 0.3
+
+        # 0b. Ưu tiên thương hiệu KOI Thé hoặc Best Seller nếu khách nhắc
+        if intents.get("thuong_hieu_koi"):
+            if mon.get("thuong_hieu") == "KOI Thé":
+                bonus += 0.55
+                ly_do.append("Món chính hãng trong menu KOI Thé")
+            else:
+                bonus -= 0.4
+
+        if intents.get("best_seller") and mon.get("best_seller"):
+            bonus += 0.35
+            ly_do.append("Nằm trong Top Best Seller được yêu thích nhất")
 
         # 1. Nhiệt độ
         if intents.get("nhiet_do_nong"):

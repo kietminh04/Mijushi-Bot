@@ -118,13 +118,13 @@
       z-index: 0;
     }
 
-    /* Leaflet Dark Mode Customization */
-    .leaflet-tile {
-      filter: brightness(0.6) invert(1) contrast(3) hue-rotate(200deg) saturate(0.3) brightness(0.7);
-    }
+    /* Leaflet Map & Popup Customization */
     .leaflet-container {
       background: #0f172a !important;
       font-family: inherit;
+    }
+    .leaflet-tile-pane {
+      filter: brightness(0.92) contrast(1.03);
     }
     .leaflet-popup-content-wrapper, .leaflet-popup-tip {
       background: rgba(15, 23, 42, 0.95) !important;
@@ -161,32 +161,24 @@
               Web AI
             </span>
           </div>
-          <p class="text-[11px] text-slate-400 hidden sm:block">Trợ lý gợi ý đồ uống thông minh • 89 quán Hà Nội</p>
+          <p class="text-[11px] text-slate-400 hidden sm:block">Trợ lý gợi ý đồ uống • Hà Nội</p>
         </div>
       </div>
 
       <!-- Center & Right Controls -->
       <div class="flex items-center space-x-1.5 sm:space-x-2">
-        <!-- Location Selector & GPS Button -->
+        <!-- Location Selector, Search & GPS Button -->
         <div class="flex items-center glass-card px-2 py-1.5 rounded-xl border border-white/10 text-xs">
           <i class="fa-solid fa-location-dot text-rose-400 mr-1.5 text-xs sm:text-sm"></i>
-          <select id="locationSelect" class="bg-transparent text-slate-200 outline-none cursor-pointer font-medium text-xs max-w-[120px] sm:max-w-[180px]">
-            <option value="Bách Khoa" class="bg-slate-900 text-slate-200">📍 Bách Khoa (HUST)</option>
-            <option value="Hoàn Kiếm" class="bg-slate-900 text-slate-200">📍 Hoàn Kiếm (Phố Cổ)</option>
-            <option value="Vũ Tông Phan" class="bg-slate-900 text-slate-200">📍 Vũ Tông Phan (Thanh Xuân)</option>
-            <option value="Đống Đa" class="bg-slate-900 text-slate-200">📍 Đống Đa (Xã Đàn)</option>
-            <option value="Cầu Giấy" class="bg-slate-900 text-slate-200">📍 Cầu Giấy (Duy Tân)</option>
-            <option value="Ba Đình" class="bg-slate-900 text-slate-200">📍 Ba Đình (Kim Mã)</option>
-            <option value="Tây Hồ" class="bg-slate-900 text-slate-200">📍 Tây Hồ (Quảng An)</option>
-            <option value="Thanh Xuân" class="bg-slate-900 text-slate-200">📍 Thanh Xuân (Nguyễn Trãi)</option>
-            <option value="Hai Bà Trưng" class="bg-slate-900 text-slate-200">📍 Hai Bà Trưng (Bà Triệu)</option>
-            <option value="Hà Đông" class="bg-slate-900 text-slate-200">📍 Hà Đông (Văn Quán)</option>
-            <option value="Nam Từ Liêm" class="bg-slate-900 text-slate-200">📍 Nam Từ Liêm (Mỹ Đình)</option>
-            <option value="Long Biên" class="bg-slate-900 text-slate-200">📍 Long Biên (Nguyễn Văn Cừ)</option>
-            <option value="Hoàng Mai" class="bg-slate-900 text-slate-200">📍 Hoàng Mai (Linh Đàm)</option>
+          <select id="locationSelect" class="bg-transparent text-slate-200 outline-none cursor-pointer font-medium text-xs max-w-[120px] sm:max-w-[190px]">
           </select>
+          <!-- Search / Custom Pin Button -->
+          <button id="btnPickPlace" title="Tìm địa chỉ bất kỳ hoặc chọn địa điểm đã lưu" class="ml-1 px-2 py-0.5 rounded-lg bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 font-semibold text-[11px] flex items-center space-x-1 transition">
+            <i class="fa-solid fa-magnifying-glass-location text-xs"></i>
+            <span class="hidden lg:inline">Tìm</span>
+          </button>
           <!-- GPS Button -->
-          <button id="btnGPS" title="Định vị vị trí GPS hiện tại của bạn" class="ml-1.5 px-2 py-0.5 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 font-semibold text-[11px] flex items-center space-x-1 transition">
+          <button id="btnGPS" title="Định vị vị trí GPS hiện tại của bạn" class="ml-1 px-2 py-0.5 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 font-semibold text-[11px] flex items-center space-x-1 transition">
             <i class="fa-solid fa-crosshairs text-xs"></i>
             <span class="hidden md:inline">GPS</span>
           </button>
@@ -201,7 +193,7 @@
         <!-- Menu Drawer Toggle Button -->
         <button id="btnOpenMenu" class="flex items-center space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-gradient-to-r from-emerald-500/20 to-teal-500/20 hover:from-emerald-500/30 hover:to-teal-500/30 border border-emerald-500/30 text-emerald-300 font-medium text-xs transition duration-200 shadow-sm">
           <i class="fa-solid fa-book-open"></i>
-          <span class="hidden sm:inline">Menu 20 Món</span>
+          <span id="menuToggleLabel" class="hidden sm:inline">Menu Đồ Uống</span>
         </button>
 
         <!-- Clear Chat Button -->
@@ -228,6 +220,9 @@
         <button class="mood-pill px-2.5 py-1 rounded-lg glass-card hover:bg-teal-500/20 hover:border-teal-500/30 text-slate-300 whitespace-nowrap transition" data-text="thèm trà sữa béo ngậy trân châu hoàng kim xả stress">
           🧋 Trà sữa trân châu
         </button>
+        <button class="mood-pill px-2.5 py-1 rounded-lg glass-card hover:bg-amber-500/20 hover:border-amber-500/30 text-amber-200 whitespace-nowrap transition" data-text="gợi ý giúp mình top món best seller của KOI Thé kèm size và mức đường đá">
+          ⭐ Best Seller KOI Thé
+        </button>
         <button class="mood-pill px-2.5 py-1 rounded-lg glass-card hover:bg-green-500/20 hover:border-green-500/30 text-slate-300 whitespace-nowrap transition" data-text="có món gì healthy ít calo hỗ trợ giảm cân đẹp da không">
           🌱 Detox ít calo
         </button>
@@ -245,26 +240,9 @@
             🍹
           </div>
           <div class="glass-card rounded-2xl rounded-tl-none p-4 text-sm text-slate-200 border border-white/10 leading-relaxed shadow-lg">
-            <p class="font-semibold text-emerald-400 mb-1 flex items-center">
-              Xin chào Kiệt! Mình là Mijushi 🍹
+            <p class="text-slate-200 text-[13px] sm:text-sm">
+              Xin chào Kiệt! Mình là Mijushi 🍹 Hôm nay bạn muốn uống gì, hay cần tìm quán quanh khu vực nào?
             </p>
-            <p class="text-slate-300 mb-3 text-[13px]">
-              Mình được trang bị não bộ **Google Gemini 3.5 Flash** cùng dữ liệu **hơn 89 chi nhánh quán quanh Hà Nội**. Bạn có thể chọn khu vực hoặc bấm nút **GPS** để định vị chính xác vị trí của bạn, mình sẽ tìm quán gần bạn nhất kèm chỉ đường và link đặt món nhé!
-            </p>
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs text-slate-300 pt-1">
-              <div class="p-2 rounded-xl bg-white/5 border border-white/5 flex items-center space-x-2">
-                <i class="fa-solid fa-sparkles text-amber-400"></i>
-                <span>Hiểu sâu cảm xúc</span>
-              </div>
-              <div class="p-2 rounded-xl bg-white/5 border border-white/5 flex items-center space-x-2">
-                <i class="fa-solid fa-image text-emerald-400"></i>
-                <span>Ảnh chụp món sắc nét</span>
-              </div>
-              <div class="p-2 rounded-xl bg-white/5 border border-white/5 flex items-center space-x-2">
-                <i class="fa-solid fa-map-pin text-cyan-400"></i>
-                <span>Bản đồ GPS trực quan</span>
-              </div>
-            </div>
           </div>
         </div>
 
@@ -277,7 +255,7 @@
           <div class="w-2 h-2 rounded-full bg-teal-400 animate-bounce [animation-delay:-0.15s]"></div>
           <div class="w-2 h-2 rounded-full bg-amber-400 animate-bounce [animation-delay:-0.3s]"></div>
         </div>
-        <span class="italic font-medium">Mijushi đang suy luận ngữ nghĩa và định vị các quán quanh bạn...</span>
+        <span class="italic font-medium">Mijushi đang tìm món ngon và quán gần bạn...</span>
       </div>
 
       <!-- 3. BOTTOM CHAT INPUT BAR -->
@@ -323,7 +301,7 @@
 
       <!-- Modal Content Header with Photo -->
       <div class="flex items-center space-x-3 mb-3 flex-shrink-0">
-        <img id="modalDrinkImg" src="" alt="Món" class="w-14 h-14 rounded-2xl object-cover border border-white/15 shadow-md flex-shrink-0">
+        <img id="modalDrinkImg" src="" alt="Món" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1551024709-8f23befc6f87?w=600&auto=format&fit=crop&q=80';" class="w-14 h-14 rounded-2xl object-cover border border-white/15 shadow-md flex-shrink-0">
         <div>
           <div class="flex items-center space-x-2">
             <h3 id="modalDrinkName" class="text-base sm:text-lg font-bold text-white">Tên Món Đồ Uống</h3>
@@ -349,6 +327,9 @@
         </div>
       </div>
 
+      <!-- KOI Thé Customization Specs (Shown for KOI Thé drinks) -->
+      <div id="modalKoiOptions" class="hidden mb-3 p-2.5 rounded-2xl bg-amber-500/10 border border-amber-500/25 text-[11px] text-slate-200 space-y-1 flex-shrink-0"></div>
+
       <!-- INTERACTIVE MAP CONTAINER IN MODAL -->
       <div class="mb-3 flex-shrink-0">
         <div class="flex items-center justify-between mb-1.5">
@@ -373,13 +354,13 @@
     </div>
   </div>
 
-  <!-- 5. SLIDE-OUT MENU DRAWER (XEM TOÀN BỘ 20 MÓN CÓ ẢNH THỰC TẾ) -->
+  <!-- 5. SLIDE-OUT MENU DRAWER (TOÀN BỘ MENU & KOI THÉ) -->
   <div id="menuDrawer" class="fixed inset-y-0 right-0 z-50 w-full max-w-md glass-panel border-l border-white/10 shadow-2xl transform translate-x-full transition-transform duration-300 ease-in-out flex flex-col">
     <!-- Drawer Header -->
     <div class="p-4 border-b border-white/10 flex items-center justify-between flex-shrink-0">
       <div class="flex items-center space-x-2">
         <span class="text-xl">📖</span>
-        <h3 class="font-bold text-white text-base">Menu 20 Món Chuẩn</h3>
+        <h3 id="drawerMenuTitle" class="font-bold text-white text-base">Danh Mục Đồ Uống</h3>
       </div>
       <button id="btnCloseDrawer" class="w-8 h-8 rounded-xl glass-card hover:bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center transition">
         <i class="fa-solid fa-xmark"></i>
@@ -392,13 +373,15 @@
         <input 
           type="text" 
           id="menuSearch" 
-          placeholder="Tìm tên món, hương vị (cà phê, bơ, dừa...)..."
+          placeholder="Tìm tên món, KOI Thé, kiều mạch, macchiato..."
           class="w-full glass-input text-xs rounded-xl py-2 pl-8 pr-3 text-slate-200 outline-none"
         >
         <i class="fa-solid fa-magnifying-glass absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
       </div>
       <div class="flex items-center space-x-1.5 overflow-x-auto text-[11px] pb-1" id="categoryFilterContainer">
-        <button class="cat-pill px-2.5 py-1 rounded-lg bg-emerald-500/20 text-emerald-300 font-medium whitespace-nowrap" data-cat="all">Tất cả (20)</button>
+        <button id="catAllBtn" class="cat-pill px-2.5 py-1 rounded-lg bg-emerald-500/20 text-emerald-300 font-medium whitespace-nowrap" data-cat="all">Tất cả</button>
+        <button id="catKoiBtn" class="cat-pill px-2.5 py-1 rounded-lg glass-card text-amber-300 whitespace-nowrap" data-cat="KOI_ALL">🧋 KOI Thé</button>
+        <button class="cat-pill px-2.5 py-1 rounded-lg glass-card text-slate-400 whitespace-nowrap" data-cat="KOI_BEST">⭐ Best Seller</button>
         <button class="cat-pill px-2.5 py-1 rounded-lg glass-card text-slate-400 whitespace-nowrap" data-cat="Cà Phê">Cà Phê</button>
         <button class="cat-pill px-2.5 py-1 rounded-lg glass-card text-slate-400 whitespace-nowrap" data-cat="Trà Sữa">Trà Sữa</button>
         <button class="cat-pill px-2.5 py-1 rounded-lg glass-card text-slate-400 whitespace-nowrap" data-cat="Trà Hoa Quả">Trà Hoa Quả</button>
@@ -411,22 +394,26 @@
     <!-- Menu Items List -->
     <div id="drawerMenuList" class="flex-1 p-3 overflow-y-auto space-y-2.5">
       <div class="text-center text-slate-400 text-xs py-8">
-        <i class="fa-solid fa-spinner fa-spin mr-2"></i>Đang tải danh mục 20 món...
+        <i class="fa-solid fa-spinner fa-spin mr-2"></i>Đang tải danh mục đồ uống...
       </div>
     </div>
   </div>
 
-  <!-- 6. FULLSCREEN INTERACTIVE MAP MODAL (XEM TOÀN BỘ 89 QUÁN HÀ NỘI) -->
-  <div id="fullMapModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden items-center justify-center p-3 sm:p-5">
-    <div class="glass-panel w-full max-w-5xl h-[88vh] rounded-3xl p-4 sm:p-5 border border-white/15 shadow-2xl flex flex-col relative">
+  <!-- 6. FULLSCREEN INTERACTIVE MAP MODAL (BẢN ĐỒ QUÁN & CHỌN VỊ TRÍ HÀ NỘI) -->
+  <div id="fullMapModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden items-center justify-center p-2 sm:p-5">
+    <div class="glass-panel w-full max-w-5xl h-[90vh] rounded-3xl p-3.5 sm:p-5 border border-white/15 shadow-2xl flex flex-col relative">
+      <!-- Modal Header -->
       <div class="flex items-center justify-between pb-3 border-b border-white/10 flex-shrink-0">
         <div class="flex items-center space-x-2.5">
           <div class="w-8 h-8 rounded-xl bg-cyan-500/20 text-cyan-400 flex items-center justify-center font-bold">
             <i class="fa-solid fa-map-location-dot"></i>
           </div>
           <div>
-            <h3 class="font-bold text-white text-sm sm:text-base">Bản Đồ Mạng Lưới 89 Quán Hà Nội</h3>
-            <p class="text-[11px] text-slate-400">Click vào bất kỳ điểm nào trên bản đồ để đổi vị trí của bạn</p>
+            <div class="flex items-center space-x-2">
+              <h3 class="font-bold text-white text-sm sm:text-base">Bản Đồ Quán & Chọn Vị Trí Hà Nội</h3>
+              <span id="fullMapShopCount" class="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/25 font-semibold hidden"></span>
+            </div>
+            <p class="text-[11px] text-slate-400">Tìm địa chỉ bất kỳ, chọn địa điểm đã lưu hoặc chạm lên bản đồ để ghim vị trí</p>
           </div>
         </div>
         <button id="btnCloseFullMap" class="w-8 h-8 rounded-full glass-card hover:bg-rose-500/20 text-slate-300 hover:text-rose-300 flex items-center justify-center transition">
@@ -434,7 +421,100 @@
         </button>
       </div>
 
-      <div class="flex-1 w-full rounded-2xl overflow-hidden mt-3 relative border border-white/10 shadow-inner">
+      <!-- Address Search, GPS & Saved Places Controls -->
+      <div class="mt-3 space-y-2 flex-shrink-0">
+        <div class="flex flex-col sm:flex-row gap-2">
+          <!-- Search Box with Autocomplete Dropdown -->
+          <div class="relative flex-1">
+            <div class="flex items-center">
+              <div class="relative flex-1">
+                <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                <input
+                  type="text"
+                  id="mapAddressSearch"
+                  autocomplete="off"
+                  placeholder="Tìm địa chỉ ở Hà Nội (VD: 277 Vũ Tông Phan, Bách Khoa, Hồ Tây, Mỹ Đình)..."
+                  class="w-full glass-input text-xs sm:text-sm rounded-xl py-2.5 pl-8 pr-8 text-slate-100 placeholder-slate-400 outline-none transition"
+                >
+                <span id="geocodeSpinner" class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-emerald-400 text-xs">
+                  <i class="fa-solid fa-spinner fa-spin"></i>
+                </span>
+              </div>
+              <button
+                type="button"
+                id="btnSearchAddress"
+                class="ml-2 px-3.5 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500/25 to-emerald-500/25 hover:from-cyan-500/35 hover:to-emerald-500/35 border border-cyan-500/35 text-cyan-200 font-semibold text-xs whitespace-nowrap transition"
+              >
+                Tìm vị trí
+              </button>
+            </div>
+            <!-- Autocomplete Results -->
+            <div id="geocodeResults" class="hidden absolute left-0 right-0 mt-1.5 rounded-2xl bg-slate-900/95 backdrop-blur-xl border border-white/15 shadow-2xl max-h-56 overflow-y-auto z-[1200] divide-y divide-white/5">
+            </div>
+          </div>
+
+          <!-- Modal GPS Quick Button -->
+          <button
+            type="button"
+            id="btnModalGPS"
+            class="px-3 py-2.5 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/30 text-emerald-300 font-semibold text-xs flex items-center justify-center space-x-1.5 whitespace-nowrap transition"
+          >
+            <i class="fa-solid fa-crosshairs"></i>
+            <span>Vị trí GPS hiện tại</span>
+          </button>
+        </div>
+
+        <!-- Saved Places Pills Row -->
+        <div class="flex items-center flex-wrap gap-1.5 text-[11px]" id="savedPlacesRow">
+          <span class="text-slate-400 font-medium mr-1">
+            <i class="fa-solid fa-bookmark text-amber-400 mr-1"></i>Đã lưu:
+          </span>
+          <div id="savedPlacesList" class="flex items-center flex-wrap gap-1.5"></div>
+        </div>
+
+        <!-- Active Pinned Location & Quick Save Bar -->
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-2 px-3 py-2 rounded-2xl bg-white/5 border border-white/10 text-xs">
+          <div class="flex items-center space-x-2 min-w-0">
+            <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse flex-shrink-0"></span>
+            <span class="text-slate-400 flex-shrink-0">Đang chọn:</span>
+            <span id="activePinSummary" class="font-semibold text-emerald-300 truncate">Bách Khoa (HUST)</span>
+          </div>
+          <div class="flex items-center flex-wrap gap-1.5 flex-shrink-0">
+            <button type="button" class="quick-save-btn px-2 py-1 rounded-lg bg-white/5 hover:bg-emerald-500/20 border border-white/10 hover:border-emerald-500/30 text-slate-200 text-[11px] transition" data-preset-label="🏫 Trường học">
+              + Lưu 🏫 Trường học
+            </button>
+            <button type="button" class="quick-save-btn px-2 py-1 rounded-lg bg-white/5 hover:bg-emerald-500/20 border border-white/10 hover:border-emerald-500/30 text-slate-200 text-[11px] transition" data-preset-label="🏠 Nhà riêng">
+              + Lưu 🏠 Nhà riêng
+            </button>
+            <button type="button" id="btnToggleCustomSave" class="px-2 py-1 rounded-lg bg-white/5 hover:bg-cyan-500/20 border border-white/10 hover:border-cyan-500/30 text-cyan-300 text-[11px] transition">
+              + Tên khác
+            </button>
+            <button type="button" id="btnConfirmLocation" class="px-3 py-1 rounded-lg bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-semibold text-[11px] shadow transition">
+              Dùng vị trí này
+            </button>
+          </div>
+        </div>
+
+        <!-- Inline Custom Place Name Input (Ẩn mặc định) -->
+        <div id="customSaveForm" class="hidden items-center gap-2 px-3 py-2 rounded-2xl bg-slate-900/70 border border-cyan-500/25 text-xs">
+          <input
+            type="text"
+            id="customPlaceNameInput"
+            maxlength="40"
+            placeholder="Nhập tên địa điểm (VD: 💼 Công ty, ☕ Quán ruột, 🏋️ Phòng tập)..."
+            class="flex-1 glass-input text-xs rounded-xl py-1.5 px-3 text-slate-100 outline-none"
+          >
+          <button type="button" id="btnSaveCustomPlace" class="px-3 py-1.5 rounded-xl bg-emerald-500/25 hover:bg-emerald-500/35 border border-emerald-500/35 text-emerald-300 font-semibold text-xs transition">
+            Lưu
+          </button>
+          <button type="button" id="btnCancelCustomSave" class="px-2.5 py-1.5 rounded-xl glass-card text-slate-400 hover:text-slate-200 text-xs transition">
+            Hủy
+          </button>
+        </div>
+      </div>
+
+      <!-- Map Container -->
+      <div class="flex-1 w-full rounded-2xl overflow-hidden mt-3 relative border border-white/10 shadow-inner min-h-[260px]">
         <div id="fullMapContainer" class="w-full h-full"></div>
       </div>
     </div>
@@ -442,47 +522,66 @@
 
   <!-- JAVASCRIPT CLIENT LOGIC -->
   <script>
+    const FALLBACK_DRINK_IMG = 'https://images.unsplash.com/photo-1551024709-8f23befc6f87?w=600&auto=format&fit=crop&q=80';
+    const SAVED_PLACES_KEY = 'mijushi_saved_places_v1';
+    const ACTIVE_LOC_KEY = 'mijushi_active_location_v1';
+
+    const PRESET_LOCATIONS = [
+      { key: "Bách Khoa", label: "📍 Bách Khoa (HUST)", lat: 21.0056, lon: 105.8433 },
+      { key: "Hoàn Kiếm", label: "📍 Hoàn Kiếm (Phố Cổ)", lat: 21.0285, lon: 105.8542 },
+      { key: "Vũ Tông Phan", label: "📍 Vũ Tông Phan (Thanh Xuân)", lat: 20.9961, lon: 105.8172 },
+      { key: "Đống Đa", label: "📍 Đống Đa (Xã Đàn)", lat: 21.0175, lon: 105.8295 },
+      { key: "Cầu Giấy", label: "📍 Cầu Giấy (Duy Tân)", lat: 21.0362, lon: 105.7906 },
+      { key: "Ba Đình", label: "📍 Ba Đình (Kim Mã)", lat: 21.0341, lon: 105.8277 },
+      { key: "Tây Hồ", label: "📍 Tây Hồ (Quảng An)", lat: 21.0601, lon: 105.8252 },
+      { key: "Thanh Xuân", label: "📍 Thanh Xuân (Nguyễn Trãi)", lat: 20.9936, lon: 105.8083 },
+      { key: "Hai Bà Trưng", label: "📍 Hai Bà Trưng (Bà Triệu)", lat: 21.0084, lon: 105.8566 },
+      { key: "Hà Đông", label: "📍 Hà Đông (Văn Quán)", lat: 20.9719, lon: 105.7766 },
+      { key: "Nam Từ Liêm", label: "📍 Nam Từ Liêm (Mỹ Đình)", lat: 21.0181, lon: 105.7725 },
+      { key: "Long Biên", label: "📍 Long Biên (Nguyễn Văn Cừ)", lat: 21.0378, lon: 105.8856 },
+      { key: "Hoàng Mai", label: "📍 Hoàng Mai (Linh Đàm)", lat: 20.9734, lon: 105.8504 }
+    ];
+
+    const LOCATION_COORDS = Object.fromEntries(PRESET_LOCATIONS.map(p => [p.key, [p.lat, p.lon]]));
+
     // State
     let fullMenu = [];
+    let koiOptions = null;
     let currentCategory = 'all';
-    let userGPS = null; // { lat, lon, label }
     let allShops = [];
     let modalMapInstance = null;
+    let modalMarkersLayer = null;
     let fullMapInstance = null;
-
-    const LOCATION_COORDS = {
-      "Bách Khoa": [21.0056, 105.8433],
-      "Hoàn Kiếm": [21.0285, 105.8542],
-      "Vũ Tông Phan": [20.9961, 105.8172],
-      "Đống Đa": [21.0175, 105.8295],
-      "Cầu Giấy": [21.0362, 105.7906],
-      "Ba Đình": [21.0341, 105.8277],
-      "Tây Hồ": [21.0601, 105.8252],
-      "Thanh Xuân": [20.9936, 105.8083],
-      "Hai Bà Trưng": [21.0084, 105.8566],
-      "Hà Đông": [20.9719, 105.7766],
-      "Nam Từ Liêm": [21.0181, 105.7725],
-      "Long Biên": [21.0378, 105.8856],
-      "Hoàng Mai": [20.9734, 105.8504]
-    };
+    let fullMapShopsLayer = null;
+    let fullMapUserLayer = null;
+    let savedPlaces = loadSavedPlaces();
+    let activeLocation = loadActiveLocation();
+    let geocodeDebounceTimer = null;
+    const recommendationStore = new Map();
+    let recCounter = 0;
 
     // DOM Elements
     const chatHistory = document.getElementById('chatHistory');
     const chatForm = document.getElementById('chatForm');
     const chatInput = document.getElementById('chatInput');
     const locationSelect = document.getElementById('locationSelect');
+    const btnPickPlace = document.getElementById('btnPickPlace');
     const btnGPS = document.getElementById('btnGPS');
     const thinkingIndicator = document.getElementById('thinkingIndicator');
     const btnClearChat = document.getElementById('btnClearChat');
 
     // Drawer Elements
     const btnOpenMenu = document.getElementById('btnOpenMenu');
+    const menuToggleLabel = document.getElementById('menuToggleLabel');
+    const drawerMenuTitle = document.getElementById('drawerMenuTitle');
+    const catAllBtn = document.getElementById('catAllBtn');
+    const catKoiBtn = document.getElementById('catKoiBtn');
     const btnCloseDrawer = document.getElementById('btnCloseDrawer');
     const menuDrawer = document.getElementById('menuDrawer');
     const drawerMenuList = document.getElementById('drawerMenuList');
     const menuSearch = document.getElementById('menuSearch');
 
-    // Modal Elements
+    // Shop Modal Elements
     const shopModal = document.getElementById('shopModal');
     const btnCloseModal = document.getElementById('btnCloseModal');
     const modalDrinkImg = document.getElementById('modalDrinkImg');
@@ -492,13 +591,356 @@
     const modalDrinkTemp = document.getElementById('modalDrinkTemp');
     const modalDrinkCalo = document.getElementById('modalDrinkCalo');
     const modalDrinkCaffeine = document.getElementById('modalDrinkCaffeine');
+    const modalKoiOptions = document.getElementById('modalKoiOptions');
     const modalCurrentArea = document.getElementById('modalCurrentArea');
     const modalShopsList = document.getElementById('modalShopsList');
 
-    // Full Map Elements
+    // Full Map Modal Elements
     const btnOpenFullMap = document.getElementById('btnOpenFullMap');
     const fullMapModal = document.getElementById('fullMapModal');
     const btnCloseFullMap = document.getElementById('btnCloseFullMap');
+    const fullMapShopCount = document.getElementById('fullMapShopCount');
+    const mapAddressSearch = document.getElementById('mapAddressSearch');
+    const btnSearchAddress = document.getElementById('btnSearchAddress');
+    const geocodeSpinner = document.getElementById('geocodeSpinner');
+    const geocodeResults = document.getElementById('geocodeResults');
+    const btnModalGPS = document.getElementById('btnModalGPS');
+    const savedPlacesList = document.getElementById('savedPlacesList');
+    const activePinSummary = document.getElementById('activePinSummary');
+    const btnToggleCustomSave = document.getElementById('btnToggleCustomSave');
+    const customSaveForm = document.getElementById('customSaveForm');
+    const customPlaceNameInput = document.getElementById('customPlaceNameInput');
+    const btnSaveCustomPlace = document.getElementById('btnSaveCustomPlace');
+    const btnCancelCustomSave = document.getElementById('btnCancelCustomSave');
+    const btnConfirmLocation = document.getElementById('btnConfirmLocation');
+
+    // --- Location & Saved Places Helpers ---
+    function loadSavedPlaces() {
+      try {
+        const raw = localStorage.getItem(SAVED_PLACES_KEY);
+        const parsed = raw ? JSON.parse(raw) : [];
+        return Array.isArray(parsed) ? parsed : [];
+      } catch {
+        return [];
+      }
+    }
+
+    function persistSavedPlaces() {
+      try {
+        localStorage.setItem(SAVED_PLACES_KEY, JSON.stringify(savedPlaces));
+      } catch (err) {
+        console.warn('Không thể lưu địa điểm vào localStorage:', err);
+      }
+    }
+
+    function loadActiveLocation() {
+      try {
+        const raw = localStorage.getItem(ACTIVE_LOC_KEY);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (parsed && typeof parsed.lat === 'number' && typeof parsed.lon === 'number') {
+            return parsed;
+          }
+        }
+      } catch {
+        // Ignore corrupt localStorage
+      }
+      const def = PRESET_LOCATIONS[0];
+      return {
+        type: 'preset',
+        key: def.key,
+        label: def.key,
+        address: 'Bách Khoa, Hai Bà Trưng, Hà Nội',
+        lat: def.lat,
+        lon: def.lon
+      };
+    }
+
+    function persistActiveLocation() {
+      try {
+        localStorage.setItem(ACTIVE_LOC_KEY, JSON.stringify(activeLocation));
+      } catch {
+        // Ignore storage errors
+      }
+    }
+
+    function renderLocationSelect() {
+      locationSelect.innerHTML = '';
+
+      if (activeLocation.type === 'custom' || activeLocation.type === 'gps') {
+        const customGroup = document.createElement('optgroup');
+        customGroup.label = '📍 Vị trí đang ghim';
+        const opt = document.createElement('option');
+        opt.value = '__ACTIVE_CUSTOM__';
+        opt.className = 'bg-slate-900 text-emerald-300';
+        opt.textContent = `📌 ${activeLocation.label}`;
+        customGroup.appendChild(opt);
+        locationSelect.appendChild(customGroup);
+      }
+
+      if (savedPlaces.length > 0) {
+        const savedGroup = document.createElement('optgroup');
+        savedGroup.label = '⭐ Địa điểm đã lưu';
+        savedPlaces.forEach((place) => {
+          const opt = document.createElement('option');
+          opt.value = `saved:${place.id}`;
+          opt.className = 'bg-slate-900 text-amber-200';
+          opt.textContent = place.label;
+          savedGroup.appendChild(opt);
+        });
+        locationSelect.appendChild(savedGroup);
+      }
+
+      const presetGroup = document.createElement('optgroup');
+      presetGroup.label = '🏙️ Khu vực Hà Nội';
+      PRESET_LOCATIONS.forEach((p) => {
+        const opt = document.createElement('option');
+        opt.value = p.key;
+        opt.className = 'bg-slate-900 text-slate-200';
+        opt.textContent = p.label;
+        presetGroup.appendChild(opt);
+      });
+      locationSelect.appendChild(presetGroup);
+
+      if (activeLocation.type === 'custom' || activeLocation.type === 'gps') {
+        locationSelect.value = '__ACTIVE_CUSTOM__';
+      } else if (activeLocation.type === 'saved') {
+        locationSelect.value = `saved:${activeLocation.id}`;
+      } else {
+        locationSelect.value = activeLocation.key || 'Bách Khoa';
+      }
+    }
+
+    function renderSavedPlacesBar() {
+      savedPlacesList.innerHTML = '';
+      if (savedPlaces.length === 0) {
+        const hint = document.createElement('span');
+        hint.className = 'text-slate-500 italic';
+        hint.textContent = 'Chưa có địa điểm riêng — tìm địa chỉ hoặc chạm bản đồ rồi bấm "+ Lưu 🏫 Trường học / 🏠 Nhà riêng"';
+        savedPlacesList.appendChild(hint);
+        return;
+      }
+
+      savedPlaces.forEach((place) => {
+        const isActive = activeLocation.type === 'saved' && activeLocation.id === place.id;
+        const wrap = document.createElement('div');
+        wrap.className = `inline-flex items-center rounded-lg border text-[11px] transition ${
+          isActive
+            ? 'bg-emerald-500/25 border-emerald-400/50 text-emerald-200 font-semibold'
+            : 'bg-white/5 border-white/10 text-slate-300 hover:border-emerald-500/30'
+        }`;
+
+        const selectBtn = document.createElement('button');
+        selectBtn.type = 'button';
+        selectBtn.className = 'px-2 py-1 flex items-center space-x-1';
+        selectBtn.title = place.address || place.label;
+        selectBtn.textContent = place.label;
+        selectBtn.addEventListener('click', () => {
+          setActiveLocation({
+            type: 'saved',
+            id: place.id,
+            key: place.label,
+            label: place.label,
+            address: place.address || place.label,
+            lat: place.lat,
+            lon: place.lon
+          }, true);
+        });
+
+        const delBtn = document.createElement('button');
+        delBtn.type = 'button';
+        delBtn.className = 'pr-1.5 pl-1 py-1 text-slate-400 hover:text-rose-400 transition';
+        delBtn.title = 'Xóa địa điểm đã lưu';
+        delBtn.innerHTML = '<i class="fa-solid fa-xmark text-[10px]"></i>';
+        delBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          savedPlaces = savedPlaces.filter(p => p.id !== place.id);
+          persistSavedPlaces();
+          if (activeLocation.type === 'saved' && activeLocation.id === place.id) {
+            const def = PRESET_LOCATIONS[0];
+            setActiveLocation({
+              type: 'preset',
+              key: def.key,
+              label: def.key,
+              address: 'Bách Khoa, Hai Bà Trưng, Hà Nội',
+              lat: def.lat,
+              lon: def.lon
+            }, false);
+          } else {
+            renderLocationSelect();
+            renderSavedPlacesBar();
+          }
+        });
+
+        wrap.appendChild(selectBtn);
+        wrap.appendChild(delBtn);
+        savedPlacesList.appendChild(wrap);
+      });
+    }
+
+    function updateActivePinBanner() {
+      const desc = activeLocation.address && activeLocation.address !== activeLocation.label
+        ? `${activeLocation.label} — ${activeLocation.address}`
+        : activeLocation.label;
+      activePinSummary.textContent = desc;
+    }
+
+    function setActiveLocation(loc, panFullMap = false) {
+      activeLocation = loc;
+      persistActiveLocation();
+      renderLocationSelect();
+      renderSavedPlacesBar();
+      updateActivePinBanner();
+
+      if (fullMapInstance) {
+        updateFullMapUserPin(loc.lat, loc.lon, loc.address || loc.label);
+        if (panFullMap) {
+          fullMapInstance.setView([loc.lat, loc.lon], 15, { animate: true });
+        }
+      }
+    }
+
+    function saveCurrentPinAs(placeName) {
+      const cleanName = (placeName || '').trim();
+      if (!cleanName) return;
+
+      const existingIdx = savedPlaces.findIndex(p => p.label.toLowerCase() === cleanName.toLowerCase());
+      const newPlace = {
+        id: existingIdx >= 0 ? savedPlaces[existingIdx].id : `place_${Date.now()}`,
+        label: cleanName,
+        address: activeLocation.address || activeLocation.label,
+        lat: activeLocation.lat,
+        lon: activeLocation.lon
+      };
+
+      if (existingIdx >= 0) {
+        savedPlaces[existingIdx] = newPlace;
+      } else {
+        savedPlaces.unshift(newPlace);
+      }
+      persistSavedPlaces();
+
+      setActiveLocation({
+        type: 'saved',
+        id: newPlace.id,
+        key: newPlace.label,
+        label: newPlace.label,
+        address: newPlace.address,
+        lat: newPlace.lat,
+        lon: newPlace.lon
+      }, false);
+
+      customSaveForm.classList.add('hidden');
+      customSaveForm.classList.remove('flex');
+      customPlaceNameInput.value = '';
+    }
+
+    locationSelect.addEventListener('change', () => {
+      const val = locationSelect.value;
+      if (val === '__ACTIVE_CUSTOM__') return;
+      if (val.startsWith('saved:')) {
+        const id = val.slice(6);
+        const found = savedPlaces.find(p => p.id === id);
+        if (found) {
+          setActiveLocation({
+            type: 'saved',
+            id: found.id,
+            key: found.label,
+            label: found.label,
+            address: found.address,
+            lat: found.lat,
+            lon: found.lon
+          }, true);
+        }
+        return;
+      }
+      const preset = PRESET_LOCATIONS.find(p => p.key === val);
+      if (preset) {
+        setActiveLocation({
+          type: 'preset',
+          key: preset.key,
+          label: preset.key,
+          address: `${preset.key}, Hà Nội`,
+          lat: preset.lat,
+          lon: preset.lon
+        }, true);
+      }
+    });
+
+    // Initialize location UI
+    renderLocationSelect();
+    renderSavedPlacesBar();
+    updateActivePinBanner();
+
+    // --- Leaflet Map Helpers (Key-free Vietnamese Map Tiles + Clean Resize) ---
+    function attachTileLayer(mapInstance) {
+      let tileErrorCount = 0;
+      let switchedToFallback = false;
+
+      const googleLayer = L.tileLayer('https://mt{s}.google.com/vt/lyrs=m&hl=vi&x={x}&y={y}&z={z}', {
+        subdomains: ['0', '1', '2', '3'],
+        maxZoom: 20,
+        attribution: '© Google Maps'
+      });
+
+      googleLayer.on('tileerror', () => {
+        tileErrorCount += 1;
+        if (!switchedToFallback && tileErrorCount >= 4) {
+          switchedToFallback = true;
+          mapInstance.removeLayer(googleLayer);
+          L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
+            maxZoom: 19,
+            attribution: '© Esri'
+          }).addTo(mapInstance);
+        }
+      });
+
+      googleLayer.addTo(mapInstance);
+    }
+
+    function refreshMapSize(mapInstance, afterResize) {
+      if (!mapInstance) return;
+      requestAnimationFrame(() => {
+        mapInstance.invalidateSize(true);
+        if (afterResize) afterResize();
+      });
+      setTimeout(() => {
+        mapInstance.invalidateSize(true);
+        if (afterResize) afterResize();
+      }, 350);
+    }
+
+    function formatDrinkPriceLabel(mon, compact = true) {
+      if (mon && mon.gia_s && mon.gia_m && mon.gia_l) {
+        const s = Math.round(mon.gia_s / 1000);
+        const m = Math.round(mon.gia_m / 1000);
+        const l = Math.round(mon.gia_l / 1000);
+        return compact ? `${s}k–${l}k` : `S: ${s}k • M: ${m}k • L: ${l}k VNĐ`;
+      }
+      return `~${Number((mon && mon.gia) || 0).toLocaleString('vi-VN')}${compact ? 'đ' : ' VNĐ'}`;
+    }
+
+    function renderKoiOptionsInModal(mon) {
+      if (!modalKoiOptions) return;
+      if (!mon || mon.thuong_hieu !== 'KOI Thé' || !koiOptions) {
+        modalKoiOptions.classList.add('hidden');
+        modalKoiOptions.innerHTML = '';
+        return;
+      }
+      const daStr = (koiOptions.muc_da || []).map(x => escapeHtml(x.ten_tieng_viet)).join(', ');
+      const duongStr = (koiOptions.muc_duong || []).map(x => escapeHtml(x.ten_tieng_viet)).join(', ');
+      const topStr = (koiOptions.topping || []).map(t => `${escapeHtml(t.ten_topping)} (+${t.phu_thu_s/1000}/${t.phu_thu_m/1000}/${t.phu_thu_l/1000}k)`).join(', ');
+      modalKoiOptions.innerHTML = `
+        <div class="font-semibold text-amber-300 flex items-center justify-between">
+          <span>🧋 Tùy chọn pha chế KOI Thé</span>
+          <span class="text-[10px] text-slate-400">${escapeHtml(mon.nhom_goc || '')}</span>
+        </div>
+        ${daStr ? `<div><span class="text-cyan-300 font-medium">Đá:</span> ${daStr}</div>` : ''}
+        ${duongStr ? `<div><span class="text-emerald-300 font-medium">Đường:</span> ${duongStr}</div>` : ''}
+        ${topStr ? `<div><span class="text-amber-200 font-medium">Topping (S/M/L):</span> ${topStr}</div>` : ''}
+      `;
+      modalKoiOptions.classList.remove('hidden');
+    }
 
     // 1. Initial Load: Fetch Menu & All Shops
     async function loadInitialData() {
@@ -507,12 +949,24 @@
           fetch('/api/menu').then(r => r.json()),
           fetch('/api/all-shops').then(r => r.json())
         ]);
+        if (menuRes.tuy_chon_koi_the) {
+          koiOptions = menuRes.tuy_chon_koi_the;
+        }
         if (menuRes.danh_sach_do_uong) {
           fullMenu = menuRes.danh_sach_do_uong;
+          const koiCount = fullMenu.filter(m => m.thuong_hieu === 'KOI Thé').length;
+          if (menuToggleLabel) menuToggleLabel.textContent = `Menu (${fullMenu.length} Món)`;
+          if (drawerMenuTitle) drawerMenuTitle.textContent = `Danh Mục ${fullMenu.length} Đồ Uống`;
+          if (catAllBtn) catAllBtn.textContent = `Tất cả (${fullMenu.length})`;
+          if (catKoiBtn) catKoiBtn.textContent = `🧋 KOI Thé (${koiCount})`;
           renderDrawerMenu(fullMenu);
         }
         if (shopsRes.danh_sach_quan) {
           allShops = shopsRes.danh_sach_quan;
+          updateFullMapShopBadge();
+          if (fullMapInstance && fullMapShopsLayer && fullMapShopsLayer.getLayers().length === 0) {
+            plotAllShopsOnFullMap();
+          }
         }
       } catch (err) {
         console.error('Lỗi tải dữ liệu ban đầu:', err);
@@ -520,42 +974,85 @@
     }
     loadInitialData();
 
-    // 2. GPS Geolocation Button
-    btnGPS.addEventListener('click', () => {
+    function updateFullMapShopBadge() {
+      if (allShops.length > 0) {
+        fullMapShopCount.textContent = `${allShops.length} quán`;
+        fullMapShopCount.classList.remove('hidden');
+      }
+    }
+
+    // 2. Reverse Geocoding & GPS Geolocation
+    async function reverseGeocodeCoords(lat, lon) {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 5000);
+      try {
+        const res = await fetch(
+          `/api/reverse-geocode?lat=${encodeURIComponent(lat)}&lon=${encodeURIComponent(lon)}`,
+          { signal: controller.signal }
+        );
+        if (!res.ok) return null;
+        const data = await res.json();
+        return data.dia_chi || data.address || data.ten || null;
+      } catch {
+        return null;
+      } finally {
+        clearTimeout(timeoutId);
+      }
+    }
+
+    async function handleGPSRequest(triggerBtn, panMap = false) {
       if (!navigator.geolocation) {
         alert('Trình duyệt của bạn không hỗ trợ định vị GPS!');
         return;
       }
-      btnGPS.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i><span>Đang tìm...</span>';
+      const originalHtml = triggerBtn.innerHTML;
+      triggerBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i><span>Đang tìm...</span>';
+      triggerBtn.disabled = true;
+
       navigator.geolocation.getCurrentPosition(
-        (pos) => {
+        async (pos) => {
           const lat = pos.coords.latitude;
           const lon = pos.coords.longitude;
-          userGPS = { lat, lon, label: '📍 Vị trí GPS của bạn' };
+          const fallbackLabel = `GPS (${lat.toFixed(3)}, ${lon.toFixed(3)})`;
 
-          // Add / update custom GPS option in select
-          let gpsOption = locationSelect.querySelector('option[data-gps="true"]');
-          if (!gpsOption) {
-            gpsOption = document.createElement('option');
-            gpsOption.setAttribute('data-gps', 'true');
-            locationSelect.insertBefore(gpsOption, locationSelect.firstChild);
+          setActiveLocation({
+            type: 'gps',
+            key: 'GPS',
+            label: fallbackLabel,
+            address: `${lat.toFixed(4)}, ${lon.toFixed(4)}`,
+            lat,
+            lon
+          }, panMap);
+
+          const resolvedAddress = await reverseGeocodeCoords(lat, lon);
+          if (resolvedAddress) {
+            setActiveLocation({
+              type: 'gps',
+              key: 'GPS',
+              label: resolvedAddress,
+              address: resolvedAddress,
+              lat,
+              lon
+            }, false);
           }
-          gpsOption.value = 'GPS';
-          gpsOption.textContent = `📍 GPS (${lat.toFixed(3)}, ${lon.toFixed(3)})`;
-          locationSelect.value = 'GPS';
 
-          btnGPS.innerHTML = '<i class="fa-solid fa-check text-emerald-400"></i><span>Đã định vị!</span>';
+          triggerBtn.innerHTML = '<i class="fa-solid fa-check text-emerald-400"></i><span>Đã định vị!</span>';
+          triggerBtn.disabled = false;
           setTimeout(() => {
-            btnGPS.innerHTML = '<i class="fa-solid fa-crosshairs text-xs"></i><span class="hidden md:inline">GPS</span>';
-          }, 3000);
+            triggerBtn.innerHTML = originalHtml;
+          }, 2500);
         },
         (err) => {
           alert('Không thể lấy tọa độ GPS: ' + (err.message || 'Quyền truy cập bị từ chối'));
-          btnGPS.innerHTML = '<i class="fa-solid fa-crosshairs text-xs"></i><span class="hidden md:inline">GPS</span>';
+          triggerBtn.innerHTML = originalHtml;
+          triggerBtn.disabled = false;
         },
         { enableHighAccuracy: true, timeout: 8000 }
       );
-    });
+    }
+
+    btnGPS.addEventListener('click', () => handleGPSRequest(btnGPS, false));
+    btnModalGPS.addEventListener('click', () => handleGPSRequest(btnModalGPS, true));
 
     // 3. Chat Form Submit
     chatForm.addEventListener('submit', async (e) => {
@@ -567,24 +1064,16 @@
       chatInput.value = '';
       chatInput.focus();
 
-      // Show thinking indicator
       thinkingIndicator.classList.remove('hidden');
       scrollToBottom();
 
       const payload = {
         message: message,
         user_name: 'Kiệt',
-        location: locationSelect.value
+        location: activeLocation.label || activeLocation.key || 'Bách Khoa',
+        lat: activeLocation.lat,
+        lon: activeLocation.lon
       };
-
-      if (locationSelect.value === 'GPS' && userGPS) {
-        payload.lat = userGPS.lat;
-        payload.lon = userGPS.lon;
-        payload.location = userGPS.label;
-      } else if (LOCATION_COORDS[locationSelect.value]) {
-        payload.lat = LOCATION_COORDS[locationSelect.value][0];
-        payload.lon = LOCATION_COORDS[locationSelect.value][1];
-      }
 
       try {
         const res = await fetch('/api/chat', {
@@ -646,57 +1135,66 @@
       const msgDiv = document.createElement('div');
       msgDiv.className = 'flex items-start space-x-3 max-w-4xl';
 
+      const khuVucLabel = data.khu_vuc || activeLocation.label || 'Hà Nội';
+      const userLat = data.toa_do_hien_tai ? data.toa_do_hien_tai.lat : activeLocation.lat;
+      const userLon = data.toa_do_hien_tai ? data.toa_do_hien_tai.lon : activeLocation.lon;
+
       let cardsHtml = '';
       (data.danh_sach_mon || []).forEach((item, index) => {
         const mon = item.mon;
         const lyDo = item.ly_do || mon.huong_vi;
-        const encodedItem = encodeURIComponent(JSON.stringify(item));
-        const userLat = data.toa_do_hien_tai ? data.toa_do_hien_tai.lat : (LOCATION_COORDS[data.khu_vuc] || [21.0056, 105.8433])[0];
-        const userLon = data.toa_do_hien_tai ? data.toa_do_hien_tai.lon : (LOCATION_COORDS[data.khu_vuc] || [21.0056, 105.8433])[1];
+        const recId = `rec_${++recCounter}`;
+        recommendationStore.set(recId, { item, khuVuc: khuVucLabel, userLat, userLon });
 
         cardsHtml += `
           <div class="glass-card rounded-2xl p-3.5 border border-white/10 flex flex-col justify-between hover:border-emerald-500/40 transition duration-200 group">
             <div>
               <!-- Image & Title -->
               <div class="flex items-start space-x-3 mb-2.5">
-                <img 
-                  src="${mon.hinh_anh}" 
-                  alt="${mon.ten}" 
+                <img
+                  src="${escapeHtml(mon.hinh_anh || FALLBACK_DRINK_IMG)}"
+                  alt="${escapeHtml(mon.ten)}"
+                  onerror="this.onerror=null;this.src='${FALLBACK_DRINK_IMG}';"
                   class="w-16 h-16 sm:w-20 sm:h-20 rounded-xl object-cover border border-white/15 shadow-md flex-shrink-0 group-hover:scale-105 transition duration-300"
                   loading="lazy"
                 >
                 <div class="flex-1 min-w-0">
                   <div class="flex items-start justify-between gap-1">
-                    <h4 class="font-bold text-white text-xs sm:text-sm group-hover:text-emerald-300 transition truncate">${index + 1}. ${mon.ten}</h4>
+                    <h4 class="font-bold text-white text-xs sm:text-sm group-hover:text-emerald-300 transition truncate">${index + 1}. ${escapeHtml(mon.ten)}</h4>
                     <span class="px-2 py-0.5 rounded-lg bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 font-bold text-xs whitespace-nowrap">
-                      ~${Number(mon.gia).toLocaleString('vi-VN')}đ
+                      ${escapeHtml(formatDrinkPriceLabel(mon, true))}
                     </span>
                   </div>
-                  <span class="text-[10px] text-slate-400 uppercase tracking-wide font-medium block mt-0.5">${mon.danh_muc}</span>
+                  <div class="flex items-center flex-wrap gap-1 mt-0.5">
+                    <span class="text-[10px] text-slate-400 uppercase tracking-wide font-medium">${escapeHtml(mon.nhom_goc || mon.danh_muc)}</span>
+                    ${mon.thuong_hieu === 'KOI Thé' ? '<span class="text-[9px] px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 font-semibold">KOI Thé</span>' : ''}
+                    ${mon.best_seller ? '<span class="text-[9px] px-1.5 py-0.5 rounded bg-rose-500/20 text-rose-300 font-semibold">⭐ Best Seller</span>' : ''}
+                  </div>
                   
                   <!-- Nutrition Pills -->
                   <div class="flex items-center space-x-1.5 text-[10px] text-slate-300 mt-2">
-                    <span class="px-1.5 py-0.5 rounded-md bg-white/5 border border-white/5">${mon.nhiet_do}</span>
-                    <span class="px-1.5 py-0.5 rounded-md bg-white/5 border border-white/5 text-amber-300">🔥 ${mon.calo} kcal</span>
-                    <span class="px-1.5 py-0.5 rounded-md bg-white/5 border border-white/5">⚡ ${mon.caffeine}</span>
+                    <span class="px-1.5 py-0.5 rounded-md bg-white/5 border border-white/5">${escapeHtml(mon.nhiet_do)}</span>
+                    <span class="px-1.5 py-0.5 rounded-md bg-white/5 border border-white/5 text-amber-300">🔥 ${escapeHtml(String(mon.calo))} kcal</span>
+                    <span class="px-1.5 py-0.5 rounded-md bg-white/5 border border-white/5">⚡ ${escapeHtml(mon.caffeine)}</span>
                   </div>
                 </div>
               </div>
 
-              <!-- Lý do AI chọn -->
+              <!-- Lý do gợi ý -->
               <div class="p-2 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-slate-200 text-[11px] mb-3">
-                <span class="text-emerald-400 font-semibold mr-1">✨ AI chọn:</span>
+                <span class="text-emerald-400 font-semibold mr-1">✨ Gợi ý:</span>
                 <span>${escapeHtml(lyDo)}</span>
               </div>
             </div>
 
             <!-- Action Button -->
-            <button 
-              onclick="openShopModal('${encodedItem}', '${data.khu_vuc || locationSelect.value}', ${userLat}, ${userLon})"
-              class="w-full py-2 rounded-xl bg-gradient-to-r from-emerald-500/20 to-teal-500/20 hover:from-emerald-500/30 hover:to-teal-500/30 border border-emerald-500/30 text-emerald-300 font-semibold text-xs flex items-center justify-center space-x-1.5 transition active:scale-95 shadow-sm"
+            <button
+              type="button"
+              data-rec-id="${recId}"
+              class="btn-open-shop-modal w-full py-2 rounded-xl bg-gradient-to-r from-emerald-500/20 to-teal-500/20 hover:from-emerald-500/30 hover:to-teal-500/30 border border-emerald-500/30 text-emerald-300 font-semibold text-xs flex items-center justify-center space-x-1.5 transition active:scale-95 shadow-sm"
             >
               <i class="fa-solid fa-map-location-dot"></i>
-              <span>Xem quán & Bản đồ (${data.khu_vuc || locationSelect.value})</span>
+              <span>Xem quán & Bản đồ (${escapeHtml(khuVucLabel)})</span>
             </button>
           </div>
         `;
@@ -707,13 +1205,11 @@
           🍹
         </div>
         <div class="w-full space-y-2.5">
-          <!-- Lời nhắn tâm lý của Gemini -->
           <div class="glass-card rounded-2xl rounded-tl-none p-3.5 text-xs sm:text-sm text-slate-200 border border-white/10 shadow-lg">
             <p class="font-medium text-emerald-300 mb-1">✨ Lời nhắn từ Mijushi:</p>
             <p class="text-slate-200 leading-relaxed">${formatBotText(data.loi_nhan || 'Dưới đây là các món cực kỳ chuẩn gu cho bạn:')}</p>
           </div>
 
-          <!-- Grid các món -->
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
             ${cardsHtml}
           </div>
@@ -724,18 +1220,28 @@
       scrollToBottom();
     }
 
+    // Delegated click handler for recommendation "Xem quán & Bản đồ" buttons
+    chatHistory.addEventListener('click', (e) => {
+      const btn = e.target.closest('.btn-open-shop-modal');
+      if (!btn) return;
+      const rec = recommendationStore.get(btn.getAttribute('data-rec-id'));
+      if (rec) {
+        openShopModal(rec.item, rec.khuVuc, rec.userLat, rec.userLon);
+      }
+    });
+
     // 4. Open Shop Locator Modal & Render Leaflet Map
-    window.openShopModal = function(encodedItem, khuVuc, userLat, userLon) {
-      const item = JSON.parse(decodeURIComponent(encodedItem));
+    function openShopModal(item, khuVuc, userLat, userLon) {
       const mon = item.mon;
 
-      modalDrinkImg.src = mon.hinh_anh;
+      modalDrinkImg.src = mon.hinh_anh || FALLBACK_DRINK_IMG;
       modalDrinkName.textContent = mon.ten;
-      modalDrinkCategory.textContent = mon.danh_muc;
-      modalDrinkPrice.textContent = `~${Number(mon.gia).toLocaleString('vi-VN')} VNĐ`;
+      modalDrinkCategory.textContent = mon.thuong_hieu === 'KOI Thé' ? `KOI Thé • ${mon.nhom_goc || mon.danh_muc}` : mon.danh_muc;
+      modalDrinkPrice.textContent = formatDrinkPriceLabel(mon, false);
       modalDrinkTemp.textContent = mon.nhiet_do;
       modalDrinkCalo.textContent = `${mon.calo} kcal`;
       modalDrinkCaffeine.textContent = mon.caffeine;
+      renderKoiOptionsInModal(mon);
       modalCurrentArea.textContent = `Quanh khu vực: ${khuVuc}`;
 
       modalShopsList.innerHTML = '';
@@ -744,41 +1250,38 @@
       if (shops.length === 0) {
         modalShopsList.innerHTML = `
           <div class="text-center py-4 text-xs text-slate-400">
-            Chưa tìm thấy quán đối tác gần nhất quanh ${khuVuc}.
+            Chưa tìm thấy quán đối tác gần nhất quanh ${escapeHtml(khuVuc)}.
           </div>
         `;
       } else {
         shops.forEach((shop, i) => {
           const shopDiv = document.createElement('div');
           shopDiv.className = 'p-3 rounded-2xl bg-white/5 border border-white/10 hover:border-emerald-500/30 transition flex flex-col justify-between';
-          
-          // Sử dụng link_shopeefood CHUẨN XÁC từ Database thay vì search query bị lỗi
-          const shopeeUrl = shop.link_shopeefood || `https://shopeefood.vn/ha-noi/danh-sach-dia-diem?q=${encodeURIComponent(shop.thuong_hieu)}`;
-          
-          // Google Maps dẫn đường thẳng tới tọa độ quán
+
+          const shopeeUrl = shop.link_shopeefood || `https://shopeefood.vn/ha-noi/danh-sach-dia-diem?q=${encodeURIComponent(shop.thuong_hieu || shop.ten_quan)}`;
           const mapDirectionUrl = `https://www.google.com/maps/dir/?api=1&destination=${shop.latitude},${shop.longitude}`;
 
           shopDiv.innerHTML = `
             <div class="mb-2">
-              <div class="flex items-start justify-between">
-                <h5 class="font-bold text-white text-xs sm:text-sm">${i + 1}. ${shop.ten_quan}</h5>
+              <div class="flex items-start justify-between gap-2">
+                <h5 class="font-bold text-white text-xs sm:text-sm">${i + 1}. ${escapeHtml(shop.ten_quan)}</h5>
                 <span class="px-2 py-0.5 rounded-lg bg-emerald-500/20 text-emerald-300 font-bold text-[11px] whitespace-nowrap">
-                  📍 Cách bạn ${shop.khoang_cach_hien_thi}
+                  📍 Cách bạn ${escapeHtml(shop.khoang_cach_hien_thi)}
                 </span>
               </div>
-              <div class="flex items-center space-x-2 text-[11px] text-amber-400 my-1">
-                <span>⭐ ${shop.rating}/5</span>
-                <span class="text-slate-400 font-normal">(${shop.user_ratings_total} đánh giá)</span>
-                <span class="text-slate-400">• Giờ: ${shop.gio_mo_cua} - ${shop.gio_dong_cua}</span>
+              <div class="flex items-center flex-wrap gap-x-2 text-[11px] text-amber-400 my-1">
+                <span>⭐ ${escapeHtml(String(shop.rating))}/5</span>
+                <span class="text-slate-400 font-normal">(${escapeHtml(String(shop.user_ratings_total))} đánh giá)</span>
+                <span class="text-slate-400">• Giờ: ${escapeHtml(shop.gio_mo_cua)} - ${escapeHtml(shop.gio_dong_cua)}</span>
               </div>
-              <p class="text-[11px] text-slate-300">🏠 ${shop.dia_chi}</p>
+              <p class="text-[11px] text-slate-300">🏠 ${escapeHtml(shop.dia_chi)}</p>
             </div>
             <div class="flex items-center space-x-2 pt-2 border-t border-white/5">
-              <a href="${shopeeUrl}" target="_blank" class="flex-1 py-1.5 rounded-xl bg-orange-500/20 hover:bg-orange-500/30 border border-orange-500/30 text-orange-300 font-semibold text-center text-xs flex items-center justify-center space-x-1.5 transition">
+              <a href="${escapeHtml(shopeeUrl)}" target="_blank" rel="noopener noreferrer" class="flex-1 py-1.5 rounded-xl bg-orange-500/20 hover:bg-orange-500/30 border border-orange-500/30 text-orange-300 font-semibold text-center text-xs flex items-center justify-center space-x-1.5 transition">
                 <i class="fa-solid fa-motorcycle"></i>
-                <span>Đặt ShopeeFood (Quán thật)</span>
+                <span>Đặt / Tìm trên ShopeeFood</span>
               </a>
-              <a href="${mapDirectionUrl}" target="_blank" class="px-3 py-1.5 rounded-xl bg-blue-500/20 hover:bg-blue-500/30 border border-blue-500/30 text-blue-300 text-xs flex items-center justify-center space-x-1 transition" title="Chỉ đường trên Google Maps">
+              <a href="${escapeHtml(mapDirectionUrl)}" target="_blank" rel="noopener noreferrer" class="px-3 py-1.5 rounded-xl bg-blue-500/20 hover:bg-blue-500/30 border border-blue-500/30 text-blue-300 text-xs flex items-center justify-center space-x-1 transition" title="Chỉ đường trên Google Maps">
                 <i class="fa-solid fa-diamond-turn-right"></i>
                 <span>Chỉ đường</span>
               </a>
@@ -791,59 +1294,56 @@
       shopModal.classList.remove('hidden');
       shopModal.classList.add('flex');
 
-      // Initialize or update Leaflet Map in Modal
-      setTimeout(() => {
-        const uLat = userLat || 21.0056;
-        const uLon = userLon || 105.8433;
+      const uLat = userLat || 21.0056;
+      const uLon = userLon || 105.8433;
 
+      const renderModalMap = () => {
         if (!modalMapInstance) {
           modalMapInstance = L.map('modalMap').setView([uLat, uLon], 15);
-          L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '© OpenStreetMap'
-          }).addTo(modalMapInstance);
+          attachTileLayer(modalMapInstance);
+          modalMarkersLayer = L.layerGroup().addTo(modalMapInstance);
         } else {
-          modalMapInstance.invalidateSize();
-          modalMapInstance.eachLayer((layer) => {
-            if (layer instanceof L.Marker || layer instanceof L.Circle) {
-              modalMapInstance.removeLayer(layer);
-            }
-          });
+          modalMarkersLayer.clearLayers();
         }
 
-        // Marker for user's location
         const userMarker = L.circleMarker([uLat, uLon], {
           radius: 8,
           fillColor: '#10b981',
           color: '#ffffff',
           weight: 2,
           opacity: 1,
-          fillOpacity: 0.9
-        }).addTo(modalMapInstance);
-        userMarker.bindPopup(`<b>📍 Vị trí của bạn</b><br>${khuVuc}`).openPopup();
+          fillOpacity: 0.95
+        }).addTo(modalMarkersLayer);
+        userMarker.bindPopup(`<b>📍 Vị trí của bạn</b><br>${escapeHtml(khuVuc)}`).openPopup();
 
         const bounds = [[uLat, uLon]];
-
-        // Markers for shops
         shops.forEach((s) => {
-          const shopMarker = L.marker([s.latitude, s.longitude]).addTo(modalMapInstance);
+          const shopMarker = L.marker([s.latitude, s.longitude]).addTo(modalMarkersLayer);
+          const popupShopee = s.link_shopeefood || `https://shopeefood.vn/ha-noi/danh-sach-dia-diem?q=${encodeURIComponent(s.thuong_hieu || s.ten_quan)}`;
           shopMarker.bindPopup(`
-            <b style="color: #10b981;">${s.ten_quan}</b><br>
-            ⭐ ${s.rating}/5 (${s.user_ratings_total} đánh giá)<br>
-            📍 Cách: ${s.khoang_cach_hien_thi}<br>
-            <a href="${s.link_shopeefood || '#'}" target="_blank" style="color: #f97316; font-weight: bold;">🛵 Đặt ShopeeFood</a>
+            <b style="color: #10b981;">${escapeHtml(s.ten_quan)}</b><br>
+            ⭐ ${escapeHtml(String(s.rating))}/5 (${escapeHtml(String(s.user_ratings_total))} đánh giá)<br>
+            📍 Cách: ${escapeHtml(s.khoang_cach_hien_thi)}<br>
+            <a href="${escapeHtml(popupShopee)}" target="_blank" rel="noopener noreferrer" style="color: #f97316; font-weight: bold;">🛵 Đặt / Tìm trên ShopeeFood</a>
           `);
           bounds.push([s.latitude, s.longitude]);
         });
 
-        if (bounds.length > 1) {
-          modalMapInstance.fitBounds(bounds, { padding: [25, 25] });
-        } else {
-          modalMapInstance.setView([uLat, uLon], 15);
-        }
-      }, 200);
-    };
+        refreshMapSize(modalMapInstance, () => {
+          if (bounds.length > 1) {
+            modalMapInstance.fitBounds(bounds, { padding: [25, 25] });
+          } else {
+            modalMapInstance.setView([uLat, uLon], 15);
+          }
+        });
+      };
 
-    // Modal Close
+      setTimeout(() => {
+        requestAnimationFrame(renderModalMap);
+      }, 350);
+    }
+
+    // Shop Modal Close
     btnCloseModal.addEventListener('click', () => {
       shopModal.classList.add('hidden');
       shopModal.classList.remove('flex');
@@ -855,63 +1355,255 @@
       }
     });
 
-    // 5. Fullscreen Map Modal (89 Quán Hà Nội)
-    btnOpenFullMap.addEventListener('click', () => {
+    // 5. Fullscreen Map Modal, Address Search & Custom Pinning
+    function updateFullMapUserPin(lat, lon, popupText) {
+      if (!fullMapInstance || !fullMapUserLayer) return;
+      fullMapUserLayer.clearLayers();
+      const pinMarker = L.circleMarker([lat, lon], {
+        radius: 10,
+        fillColor: '#10b981',
+        color: '#ffffff',
+        weight: 3,
+        opacity: 1,
+        fillOpacity: 0.95
+      }).addTo(fullMapUserLayer);
+      pinMarker.bindPopup(`<b style="color:#34d399;">📍 Vị trí đang chọn</b><br>${escapeHtml(popupText || `${lat.toFixed(4)}, ${lon.toFixed(4)}`)}`).openPopup();
+    }
+
+    function plotAllShopsOnFullMap() {
+      if (!fullMapInstance || !fullMapShopsLayer) return;
+      fullMapShopsLayer.clearLayers();
+      allShops.forEach((s) => {
+        const m = L.marker([s.latitude, s.longitude]).addTo(fullMapShopsLayer);
+        const popupShopee = s.link_shopeefood || `https://shopeefood.vn/ha-noi/danh-sach-dia-diem?q=${encodeURIComponent(s.thuong_hieu || s.ten_quan)}`;
+        m.bindPopup(`
+          <b style="color: #10b981;">${escapeHtml(s.ten_quan)}</b><br>
+          <small>Thương hiệu: ${escapeHtml(s.thuong_hieu || '')} • Quận: ${escapeHtml(s.quan || '')}</small><br>
+          ⭐ ${escapeHtml(String(s.rating))}/5 (${escapeHtml(String(s.user_ratings_total))} đánh giá)<br>
+          🏠 ${escapeHtml(s.dia_chi)}<br>
+          <div style="margin-top: 5px;">
+            <a href="${escapeHtml(popupShopee)}" target="_blank" rel="noopener noreferrer" style="color: #f97316; font-weight: bold;">🛵 Đặt / Tìm trên ShopeeFood</a>
+          </div>
+        `);
+      });
+    }
+
+    function openFullMapModal(focusSearch = false) {
       fullMapModal.classList.remove('hidden');
       fullMapModal.classList.add('flex');
+      geocodeResults.classList.add('hidden');
+      updateActivePinBanner();
+      renderSavedPlacesBar();
 
-      setTimeout(() => {
-        const curCoords = (locationSelect.value === 'GPS' && userGPS) ? [userGPS.lat, userGPS.lon] : (LOCATION_COORDS[locationSelect.value] || [21.0056, 105.8433]);
+      const initOrRefreshMap = async () => {
+        if (allShops.length === 0) {
+          try {
+            const shopsRes = await fetch('/api/all-shops').then(r => r.json());
+            if (shopsRes.danh_sach_quan) {
+              allShops = shopsRes.danh_sach_quan;
+              updateFullMapShopBadge();
+            }
+          } catch (err) {
+            console.error('Lỗi tải danh sách quán:', err);
+          }
+        }
+
+        const curCoords = [activeLocation.lat, activeLocation.lon];
 
         if (!fullMapInstance) {
-          fullMapInstance = L.map('fullMapContainer').setView(curCoords, 13);
-          L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '© OpenStreetMap'
-          }).addTo(fullMapInstance);
+          fullMapInstance = L.map('fullMapContainer').setView(curCoords, 14);
+          attachTileLayer(fullMapInstance);
+          fullMapShopsLayer = L.layerGroup().addTo(fullMapInstance);
+          fullMapUserLayer = L.layerGroup().addTo(fullMapInstance);
 
-          // Allow user to click anywhere on the map to set location
-          fullMapInstance.on('click', (e) => {
+          // Click anywhere on map to drop pin + reverse geocode
+          let mapClickSeq = 0;
+          fullMapInstance.on('click', async (e) => {
+            const seq = ++mapClickSeq;
             const { lat, lng } = e.latlng;
-            userGPS = { lat, lon: lng, label: `📍 Tọa độ (${lat.toFixed(3)}, ${lng.toFixed(3)})` };
-            
-            let gpsOption = locationSelect.querySelector('option[data-gps="true"]');
-            if (!gpsOption) {
-              gpsOption = document.createElement('option');
-              gpsOption.setAttribute('data-gps', 'true');
-              locationSelect.insertBefore(gpsOption, locationSelect.firstChild);
-            }
-            gpsOption.value = 'GPS';
-            gpsOption.textContent = `📍 Tọa độ (${lat.toFixed(3)}, ${lng.toFixed(3)})`;
-            locationSelect.value = 'GPS';
+            const tempLabel = `Tọa độ (${lat.toFixed(4)}, ${lng.toFixed(4)})`;
 
-            alert(`Đã ghim vị trí mới của bạn tại tọa độ: ${lat.toFixed(4)}, ${lng.toFixed(4)}!`);
-            fullMapModal.classList.add('hidden');
-            fullMapModal.classList.remove('flex');
+            setActiveLocation({
+              type: 'custom',
+              key: 'PIN',
+              label: tempLabel,
+              address: 'Đang lấy địa chỉ...',
+              lat,
+              lon: lng
+            }, false);
+
+            const resolvedAddress = await reverseGeocodeCoords(lat, lng);
+            if (seq !== mapClickSeq) return;
+            const finalAddress = resolvedAddress || tempLabel;
+            const shortLabel = finalAddress.split(',')[0].trim() || tempLabel;
+
+            setActiveLocation({
+              type: 'custom',
+              key: 'PIN',
+              label: shortLabel,
+              address: finalAddress,
+              lat,
+              lon: lng
+            }, false);
           });
 
-          // Plot all 89 shops
-          allShops.forEach((s) => {
-            const m = L.marker([s.latitude, s.longitude]).addTo(fullMapInstance);
-            m.bindPopup(`
-              <b style="color: #10b981;">${s.ten_quan}</b><br>
-              <small>Thương hiệu: ${s.thuong_hieu} • Quận: ${s.quan}</small><br>
-              ⭐ ${s.rating}/5 (${s.user_ratings_total} đánh giá)<br>
-              🏠 ${s.dia_chi}<br>
-              <div style="margin-top: 5px;">
-                <a href="${s.link_shopeefood || '#'}" target="_blank" style="color: #f97316; font-weight: bold;">🛵 Đặt ShopeeFood</a>
-              </div>
-            `);
-          });
-        } else {
-          fullMapInstance.invalidateSize();
-          fullMapInstance.setView(curCoords, 13);
+          plotAllShopsOnFullMap();
         }
-      }, 200);
-    });
 
-    btnCloseFullMap.addEventListener('click', () => {
+        updateFullMapUserPin(curCoords[0], curCoords[1], activeLocation.address || activeLocation.label);
+        refreshMapSize(fullMapInstance, () => {
+          fullMapInstance.setView(curCoords, 14);
+        });
+
+        if (focusSearch) {
+          mapAddressSearch.focus();
+        }
+      };
+
+      setTimeout(() => {
+        requestAnimationFrame(initOrRefreshMap);
+      }, 350);
+    }
+
+    btnOpenFullMap.addEventListener('click', () => openFullMapModal(false));
+    btnPickPlace.addEventListener('click', () => openFullMapModal(true));
+
+    function closeFullMapModal() {
       fullMapModal.classList.add('hidden');
       fullMapModal.classList.remove('flex');
+      geocodeResults.classList.add('hidden');
+    }
+
+    btnCloseFullMap.addEventListener('click', closeFullMapModal);
+    btnConfirmLocation.addEventListener('click', closeFullMapModal);
+    fullMapModal.addEventListener('click', (e) => {
+      if (e.target === fullMapModal) {
+        closeFullMapModal();
+      }
+    });
+
+    // Address Geocode Search inside Fullscreen Map Modal
+    async function performAddressSearch(queryText) {
+      const q = (queryText || '').trim();
+      if (!q) {
+        geocodeResults.classList.add('hidden');
+        return;
+      }
+
+      geocodeSpinner.classList.remove('hidden');
+      try {
+        const res = await fetch(`/api/geocode?q=${encodeURIComponent(q)}`);
+        const data = await res.json();
+        const items = Array.isArray(data) ? data : (data.results || data.ket_qua || []);
+        renderGeocodeResults(items, q);
+      } catch (err) {
+        console.error('Lỗi tìm kiếm địa chỉ:', err);
+        renderGeocodeResults([], q, true);
+      } finally {
+        geocodeSpinner.classList.add('hidden');
+      }
+    }
+
+    function renderGeocodeResults(items, queryText, isError = false) {
+      geocodeResults.innerHTML = '';
+      if (isError) {
+        geocodeResults.innerHTML = '<div class="p-3 text-xs text-rose-300">Không thể kết nối dịch vụ tìm địa chỉ, vui lòng thử lại.</div>';
+        geocodeResults.classList.remove('hidden');
+        return;
+      }
+      if (!items || items.length === 0) {
+        geocodeResults.innerHTML = `<div class="p-3 text-xs text-slate-400">Không tìm thấy địa điểm khớp với "${escapeHtml(queryText)}". Thử thêm tên đường hoặc quận Hà Nội!</div>`;
+        geocodeResults.classList.remove('hidden');
+        return;
+      }
+
+      items.forEach((item) => {
+        const lat = Number(item.lat);
+        const lon = Number(item.lon);
+        const fullName = item.ten || item.display_name || `${lat.toFixed(4)}, ${lon.toFixed(4)}`;
+        const shortName = fullName.split(',')[0].trim() || fullName;
+
+        const row = document.createElement('button');
+        row.type = 'button';
+        row.className = 'w-full text-left px-3.5 py-2.5 hover:bg-emerald-500/15 transition flex items-start space-x-2.5';
+        row.innerHTML = `
+          <i class="fa-solid fa-location-dot text-emerald-400 mt-0.5 text-xs flex-shrink-0"></i>
+          <div class="min-w-0 flex-1">
+            <div class="text-xs font-semibold text-white truncate">${escapeHtml(shortName)}</div>
+            <div class="text-[11px] text-slate-400 line-clamp-1">${escapeHtml(fullName)}</div>
+          </div>
+        `;
+        row.addEventListener('click', () => {
+          setActiveLocation({
+            type: 'custom',
+            key: 'SEARCH',
+            label: shortName,
+            address: fullName,
+            lat,
+            lon
+          }, true);
+          mapAddressSearch.value = shortName;
+          geocodeResults.classList.add('hidden');
+        });
+        geocodeResults.appendChild(row);
+      });
+
+      geocodeResults.classList.remove('hidden');
+    }
+
+    btnSearchAddress.addEventListener('click', () => {
+      performAddressSearch(mapAddressSearch.value);
+    });
+
+    mapAddressSearch.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        clearTimeout(geocodeDebounceTimer);
+        performAddressSearch(mapAddressSearch.value);
+      }
+    });
+
+    mapAddressSearch.addEventListener('input', () => {
+      const val = mapAddressSearch.value.trim();
+      clearTimeout(geocodeDebounceTimer);
+      if (val.length < 3) {
+        geocodeResults.classList.add('hidden');
+        return;
+      }
+      geocodeDebounceTimer = setTimeout(() => {
+        performAddressSearch(val);
+      }, 420);
+    });
+
+    // Quick Save Preset Chips & Custom Name Save
+    document.querySelectorAll('.quick-save-btn').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        saveCurrentPinAs(btn.getAttribute('data-preset-label'));
+      });
+    });
+
+    btnToggleCustomSave.addEventListener('click', () => {
+      customSaveForm.classList.toggle('hidden');
+      customSaveForm.classList.toggle('flex');
+      if (!customSaveForm.classList.contains('hidden')) {
+        customPlaceNameInput.focus();
+      }
+    });
+
+    btnCancelCustomSave.addEventListener('click', () => {
+      customSaveForm.classList.add('hidden');
+      customSaveForm.classList.remove('flex');
+    });
+
+    btnSaveCustomPlace.addEventListener('click', () => {
+      saveCurrentPinAs(customPlaceNameInput.value);
+    });
+
+    customPlaceNameInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        saveCurrentPinAs(customPlaceNameInput.value);
+      }
     });
 
     // 6. Menu Drawer Controls
@@ -941,8 +1633,19 @@
     function filterDrawerMenu() {
       const q = menuSearch.value.toLowerCase().trim();
       const filtered = fullMenu.filter(m => {
-        const matchCat = (currentCategory === 'all') || (m.danh_muc === currentCategory);
-        const matchQuery = !q || m.ten.toLowerCase().includes(q) || m.huong_vi.toLowerCase().includes(q) || m.mo_ta.toLowerCase().includes(q);
+        let matchCat = false;
+        if (currentCategory === 'all') matchCat = true;
+        else if (currentCategory === 'KOI_ALL') matchCat = (m.thuong_hieu === 'KOI Thé');
+        else if (currentCategory === 'KOI_BEST') matchCat = Boolean(m.best_seller);
+        else matchCat = (m.danh_muc === currentCategory);
+
+        const matchQuery = !q ||
+          (m.ten || '').toLowerCase().includes(q) ||
+          (m.ten_tieng_anh || '').toLowerCase().includes(q) ||
+          (m.thuong_hieu || '').toLowerCase().includes(q) ||
+          (m.nhom_goc || '').toLowerCase().includes(q) ||
+          (m.huong_vi || '').toLowerCase().includes(q) ||
+          (m.mo_ta || '').toLowerCase().includes(q);
         return matchCat && matchQuery;
       });
       renderDrawerMenu(filtered);
@@ -958,21 +1661,30 @@
       items.forEach(m => {
         const card = document.createElement('div');
         card.className = 'glass-card rounded-2xl p-3 border border-white/5 hover:border-emerald-500/30 transition flex space-x-3 items-center';
+        const subTag = m.thuong_hieu === 'KOI Thé' ? `KOI Thé • ${m.nhom_goc || m.danh_muc}` : m.danh_muc;
+        const bsTag = m.best_seller ? ' • ⭐' : '';
         card.innerHTML = `
-          <img src="${m.hinh_anh}" alt="${m.ten}" class="w-14 h-14 rounded-xl object-cover border border-white/10 shadow flex-shrink-0" loading="lazy">
+          <img
+            src="${escapeHtml(m.hinh_anh || FALLBACK_DRINK_IMG)}"
+            alt="${escapeHtml(m.ten)}"
+            onerror="this.onerror=null;this.src='${FALLBACK_DRINK_IMG}';"
+            class="w-14 h-14 rounded-xl object-cover border border-white/10 shadow flex-shrink-0"
+            loading="lazy"
+          >
           <div class="flex-1 min-w-0">
             <div class="flex items-start justify-between mb-1">
-              <div>
-                <h5 class="font-bold text-white text-xs truncate">${m.ten}</h5>
-                <span class="text-[10px] text-slate-400 uppercase font-medium">${m.danh_muc} • ${m.nhiet_do}</span>
+              <div class="min-w-0 pr-2">
+                <h5 class="font-bold text-white text-xs truncate">${escapeHtml(m.ten)}</h5>
+                <span class="text-[10px] text-slate-400 uppercase font-medium">${escapeHtml(subTag)}${bsTag} • ${escapeHtml(m.nhiet_do)}</span>
               </div>
-              <span class="text-emerald-400 font-bold text-xs whitespace-nowrap">~${Number(m.gia).toLocaleString('vi-VN')}đ</span>
+              <span class="text-emerald-400 font-bold text-xs whitespace-nowrap">${escapeHtml(formatDrinkPriceLabel(m, true))}</span>
             </div>
             <div class="flex items-center justify-between pt-1 border-t border-white/5">
-              <span class="text-[10px] text-amber-300">🔥 ${m.calo} kcal • ⚡ ${m.caffeine}</span>
-              <button 
-                onclick="askAIAboutDrink('${m.ten}')" 
-                class="px-2 py-0.5 rounded-lg bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 text-[10px] font-semibold transition"
+              <span class="text-[10px] text-amber-300">🔥 ${escapeHtml(String(m.calo))} kcal • ⚡ ${escapeHtml(m.caffeine)}</span>
+              <button
+                type="button"
+                data-drink-name="${escapeHtml(m.ten)}"
+                class="btn-ask-ai-drink px-2 py-0.5 rounded-lg bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 text-[10px] font-semibold transition"
               >
                 Hỏi AI ✨
               </button>
@@ -983,11 +1695,16 @@
       });
     }
 
-    window.askAIAboutDrink = function(drinkName) {
-      menuDrawer.classList.add('translate-x-full');
-      chatInput.value = `Tư vấn cho mình về món ${drinkName} và tìm quán gần nhất`;
-      chatForm.dispatchEvent(new Event('submit'));
-    };
+    drawerMenuList.addEventListener('click', (e) => {
+      const btn = e.target.closest('.btn-ask-ai-drink');
+      if (!btn) return;
+      const drinkName = btn.getAttribute('data-drink-name');
+      if (drinkName) {
+        menuDrawer.classList.add('translate-x-full');
+        chatInput.value = `Tư vấn cho mình về món ${drinkName} và tìm quán gần nhất`;
+        chatForm.dispatchEvent(new Event('submit'));
+      }
+    });
 
     // 7. Quick Mood Pills Click Handler
     document.querySelectorAll('.mood-pill').forEach(btn => {
@@ -1000,14 +1717,16 @@
 
     // 8. Clear Chat
     btnClearChat.addEventListener('click', () => {
+      recommendationStore.clear();
       chatHistory.innerHTML = `
         <div class="flex items-start space-x-3 max-w-2xl">
           <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-brand-500 to-teal-400 flex items-center justify-center text-white text-base shadow-md flex-shrink-0 mt-0.5">
             🍹
           </div>
           <div class="glass-card rounded-2xl rounded-tl-none p-4 text-sm text-slate-200 border border-white/10 leading-relaxed shadow-lg">
-            <p class="font-semibold text-emerald-400 mb-1">Đã làm mới cuộc trò chuyện!</p>
-            <p class="text-slate-300 text-[13px]">Bạn đang muốn thưởng thức ly nước thế nào hôm nay?</p>
+            <p class="text-slate-200 text-[13px] sm:text-sm">
+              Xin chào Kiệt! Mình là Mijushi 🍹 Hôm nay bạn muốn uống gì, hay cần tìm quán quanh khu vực nào?
+            </p>
           </div>
         </div>
       `;
@@ -1018,8 +1737,9 @@
       chatHistory.scrollTop = chatHistory.scrollHeight;
     }
     function escapeHtml(text) {
+      if (text === null || text === undefined) return '';
       const div = document.createElement('div');
-      div.textContent = text;
+      div.textContent = String(text);
       return div.innerHTML;
     }
     function formatBotText(text) {

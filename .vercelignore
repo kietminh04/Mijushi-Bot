@@ -1,6 +1,10 @@
 .git
 .github
+.vercel
 __pycache__
 *.pyc
 .env
+.venv
+venv
+Data
 Cơ Sở Dữ Liệu Đồ Uống Cũ.db.bak

@@ -42,22 +42,37 @@ def tinh_khoang_cach_haversine(lat1: float, lon1: float, lat2: float, lon2: floa
     return int(R * c)
 
 
+def _giai_ma_json_list(raw_val: Any) -> List[str]:
+    """Giải mã an toàn chuỗi JSON mảng thành Python list."""
+    if not raw_val:
+        return []
+    if isinstance(raw_val, list):
+        return raw_val
+    try:
+        parsed = json.loads(raw_val)
+        return parsed if isinstance(parsed, list) else []
+    except Exception:
+        return []
+
+
+def _chuan_hoa_do_uong(row: sqlite3.Row) -> Dict[str, Any]:
+    """Chuẩn hóa một bản ghi đồ uống từ SQLite sang dict đầy đủ."""
+    d = dict(row)
+    d["tam_trang"] = _giai_ma_json_list(d.get("tam_trang"))
+    d["thoi_tiet"] = _giai_ma_json_list(d.get("thoi_tiet"))
+    d["topping"] = _giai_ma_json_list(d.get("topping"))
+    d["mua_goi_y"] = _giai_ma_json_list(d.get("mua_goi_y"))
+    return d
+
+
 def lay_tat_ca_do_uong() -> List[Dict[str, Any]]:
     """Lấy danh sách tất cả các món đồ uống."""
     conn = khoi_tao_ket_noi()
     cursor = conn.cursor()
-    cursor.execute("SELECT * FROM DoUong ORDER BY danh_muc, gia ASC")
+    cursor.execute("SELECT * FROM DoUong ORDER BY thuong_hieu, danh_muc, gia ASC")
     rows = cursor.fetchall()
     conn.close()
-
-    ket_qua = []
-    for r in rows:
-        d = dict(r)
-        d["tam_trang"] = json.loads(d["tam_trang"]) if "tam_trang" in d and d["tam_trang"] else []
-        d["thoi_tiet"] = json.loads(d["thoi_tiet"]) if "thoi_tiet" in d and d["thoi_tiet"] else []
-        d["topping"] = json.loads(d["topping"]) if "topping" in d and d["topping"] else []
-        ket_qua.append(d)
-    return ket_qua
+    return [_chuan_hoa_do_uong(r) for r in rows]
 
 
 def lay_do_uong_theo_danh_muc(danh_muc: str) -> List[Dict[str, Any]]:
@@ -67,15 +82,7 @@ def lay_do_uong_theo_danh_muc(danh_muc: str) -> List[Dict[str, Any]]:
     cursor.execute("SELECT * FROM DoUong WHERE danh_muc = ? ORDER BY gia ASC", (danh_muc,))
     rows = cursor.fetchall()
     conn.close()
-
-    ket_qua = []
-    for r in rows:
-        d = dict(r)
-        d["tam_trang"] = json.loads(d["tam_trang"]) if "tam_trang" in d and d["tam_trang"] else []
-        d["thoi_tiet"] = json.loads(d["thoi_tiet"]) if "thoi_tiet" in d and d["thoi_tiet"] else []
-        d["topping"] = json.loads(d["topping"]) if "topping" in d and d["topping"] else []
-        ket_qua.append(d)
-    return ket_qua
+    return [_chuan_hoa_do_uong(r) for r in rows]
 
 
 def lay_do_uong_theo_id(mon_id: str) -> Optional[Dict[str, Any]]:
@@ -85,14 +92,43 @@ def lay_do_uong_theo_id(mon_id: str) -> Optional[Dict[str, Any]]:
     cursor.execute("SELECT * FROM DoUong WHERE id = ?", (mon_id,))
     r = cursor.fetchone()
     conn.close()
+    return _chuan_hoa_do_uong(r) if r else None
 
-    if not r:
-        return None
-    d = dict(r)
-    d["tam_trang"] = json.loads(d["tam_trang"]) if "tam_trang" in d and d["tam_trang"] else []
-    d["thoi_tiet"] = json.loads(d["thoi_tiet"]) if "thoi_tiet" in d and d["thoi_tiet"] else []
-    d["topping"] = json.loads(d["topping"]) if "topping" in d and d["topping"] else []
-    return d
+
+def lay_tuy_chon_thuong_hieu(thuong_hieu: str = "KOI Thé") -> Dict[str, Any]:
+    """Lấy bảng mức đá, mức đường, topping và gợi ý theo mùa từ SQLite."""
+    ket_qua: Dict[str, Any] = {"muc_da": [], "muc_duong": [], "topping": [], "goi_y_theo_mua": []}
+    conn = khoi_tao_ket_noi()
+    try:
+        cursor = conn.cursor()
+        for loai, key in (("ICE", "muc_da"), ("SUGAR", "muc_duong")):
+            try:
+                rows = cursor.execute(
+                    "SELECT ma_tuy_chon, ten_tieng_viet FROM TuyChonPhaChe WHERE thuong_hieu = ? AND loai = ? ORDER BY thu_tu ASC",
+                    (thuong_hieu, loai),
+                ).fetchall()
+                ket_qua[key] = [dict(r) for r in rows]
+            except Exception:
+                pass
+        try:
+            rows = cursor.execute(
+                "SELECT ten_topping, ten_tieng_anh, phu_thu_s, phu_thu_m, phu_thu_l FROM ToppingDoUong WHERE thuong_hieu = ? ORDER BY id ASC",
+                (thuong_hieu,),
+            ).fetchall()
+            ket_qua["topping"] = [dict(r) for r in rows]
+        except Exception:
+            pass
+        try:
+            rows = cursor.execute(
+                "SELECT mua, nhu_cau, nhom_uu_tien, mon_vi_du, cau_tra_loi_mau, luu_y FROM GoiYTheoMua WHERE thuong_hieu = ? ORDER BY id ASC",
+                (thuong_hieu,),
+            ).fetchall()
+            ket_qua["goi_y_theo_mua"] = [dict(r) for r in rows]
+        except Exception:
+            pass
+    finally:
+        conn.close()
+    return ket_qua
 
 
 def tim_quan_ban_mon(mon_id: str, user_lat: float = 21.0285, user_lon: float = 105.8542, top_k: int = 2) -> List[Dict[str, Any]]:
@@ -115,6 +151,9 @@ def tim_quan_ban_mon(mon_id: str, user_lat: float = 21.0285, user_lon: float = 1
         placeholders = ",".join(["?"] * len(ds_th))
         cursor.execute(f"SELECT * FROM ChiNhanhQuan WHERE thuong_hieu IN ({placeholders})", ds_th)
         rows = cursor.fetchall()
+        if not rows:
+            cursor.execute("SELECT * FROM ChiNhanhQuan")
+            rows = cursor.fetchall()
 
     conn.close()
 

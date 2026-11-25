@@ -18,3 +18,13 @@ logs/
 *.log
 
 .vercel
+
+
+# File cũ thuộc Discord Bot / Data thô / Ảnh sơ đồ (lưu cục bộ, không đẩy lên GitHub Web)
+Khởi Chạy Bot.py
+.github/
+Dữ Liệu Menu.json
+Hướng Dẫn Sử Dụng.md
+Tài Liệu Toàn Cảnh Dự Án.md
+Data/
+*.png

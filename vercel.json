@@ -1,8 +1,25 @@
 {
-  "rewrites": [
+  "version": 2,
+  "builds": [
     {
-      "source": "/(.*)",
-      "destination": "/api/index.py"
+      "src": "api/index.py",
+      "use": "@vercel/python",
+      "config": {
+        "includeFiles": [
+          "Cơ Sở Dữ Liệu Đồ Uống.db",
+          "Giao Diện/**",
+          "Cơ Sở Dữ Liệu.py",
+          "Trợ Lý Gemini.py",
+          "Bộ Máy Gợi Ý.py",
+          "Máy Chủ Web.py"
+        ]
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "api/index.py"
     }
   ]
 }
